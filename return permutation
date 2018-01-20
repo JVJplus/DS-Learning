@@ -1,0 +1,47 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int permut(string s,string output[])
+{
+  if(s.length()==1)
+  {
+    output[0]=s;
+    return 1;
+  }
+
+  int index=0;
+  string output2[9000];
+  for(int i=0;i<s.length();i++)
+  {
+    string fd=s.substr(i,1);
+    string remain=s.substr(0,i)+s.substr(i+1);
+
+    int c=permut(remain,output2);
+    for(int j=0;j<c;j++)
+    {
+      output[index++]=fd+output2[j];
+    }
+  }
+  return index;
+}
+
+int main()
+{
+
+  #ifndef ONLINE_JUDGE
+    // for getting input from input.txt
+  freopen("input.txt", "r", stdin);
+    // for writing output to output.txt
+  freopen("output.txt", "w", stdout);
+  #endif
+
+////////////////////////////////////////////////////
+  string out[9000];
+  string s;
+  cin>>s;
+  int c=permut(s,out);
+  for (int i = 0; i < c; ++i)
+  {
+   cout<<out[i]<<endl;
+  }
+}
