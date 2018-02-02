@@ -170,23 +170,22 @@ static Node* reverse(Node* head)
 
 static bool isPalindrome(Node* head)
 {
-	Node *fast=head,*slow=head, *prev_slow=slow;
+	Node *fast=head,*slow=head;
 	while(fast&&fast->next)
 	{
-		prev_slow=slow;
 		slow=slow->next;
 		fast=fast->next->next;
 	}	
 
-	if(fast)//odd
-		prev_slow=slow;
+	Node* part2=slow,*part1=head;
 
-	Node *part1=head;
-	Node *part2=prev_slow->next;
-	prev_slow->next=NULL;
+	Node::print(part1);
+	Node::print(part2);
 
 	part2=reverse(part2);
-	while(part1&&part2)
+	Node::print(part2);
+
+	while(part2)
 	{
 		if(part1->data!=part2->data)
 			return false;
@@ -196,19 +195,18 @@ static bool isPalindrome(Node* head)
 	return true;
 }
 
-#define node Node
-static node* midpoint_floor(node *head)
+static Node* midpoint_floor(Node *head)
 {
 	if(!head)
 		return head;
 	Node *fast=head, *slow=head->next;
-    while(fast&&fast->next)
-    {
-    	slow=slow->next;
-    	fast=fast->next->next;
-    }
+	while(fast&&fast->next)
+	{
+		slow=slow->next;
+		fast=fast->next->next;
+	}
 
-    return slow;
+	return slow;
 }
 
 static Node* mergeTwoSorted(Node* A,Node* B)
@@ -248,22 +246,64 @@ static Node* mergeTwoSorted(Node* A,Node* B)
 		}
 	}
 
-	while(A)
-	{
+	if(A)
 		TL->next=A;
-		TL=A;
-		A=A->next;
-	}
-
-	while(B)
-	{
+	if(B)
 		TL->next=B;
-		TL=B;
-		B=B->next;
-	}
 
 	return FT;
 }
+
+static Node* midpoint(Node *head)
+{
+	if(head==NULL)//||head->next==NULL||head->next->next==NULL)
+		return head;
+
+	Node *slow=head,*fast=head->next;
+	while(fast && fast->next)
+	{
+		fast=fast->next->next;
+		slow=slow->next;
+	}
+	return slow;
+}
+
+static Node* mergeSort(Node* head)
+{
+	if(!head->next)
+		return head;
+
+	// cout<<getLength(head)<<" : ";print(head);
+
+	Node* mid=midpoint(head);
+	Node* next=mid->next;
+	mid->next=NULL;
+
+	Node *a=mergeSort(head);
+	Node *b=mergeSort(next);
+	Node *c=mergeTwoSorted(a,b);
+	return c;
+}
+
+static Node* reverse_rec(Node *head)
+{
+	if(head->next==NULL||head==NULL)
+		return head;
+	Node *returned=reverse_rec(head->next);
+	head->next->next=head;
+	head->next=NULL;
+	return returned;
+}
+
+
+int indexOfNRecursive(Node *head, int n) {
+ 	if(head==NULL)
+      return -1;
+  	if(head->data==n)
+      return 0;
+  	return 1+indexOfNRecursive(head->next,n);    
+}
+
 
 };
 
@@ -282,8 +322,7 @@ int main()
 	Node *head1=NULL,*head2=NULL;
 	head1=Node::takeInput(head1);
 	head2=Node::takeInput(head2);
-	
-	head1=Node::mergeTwoSorted(head1,head2);
 
+	head1=Node::reverse_rec(head1);
 	Node::print(head1);
 }
