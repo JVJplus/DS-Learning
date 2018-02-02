@@ -1,0 +1,289 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+class Node
+{
+public:
+	int data;
+	Node *next;
+
+	Node(int data)
+	{
+		this->data=data;
+		next=NULL;
+	}
+
+	static void print(Node *head)
+	{
+		if(!head)
+		{
+			cout<<endl;
+			return;
+		}
+		cout<<head->data<<" ";
+		print(head->next);
+	}
+
+	static Node* takeInput(Node *head)
+	{
+		int n=0;
+		cin>>n;
+		Node *tail=NULL;
+		while(n!=-1)
+		{
+			Node *t=new Node(n);
+			if(!head)
+			{
+				head=t;
+				tail=t;
+			}
+			else
+			{
+				tail->next=t;
+				tail=t;
+			}
+
+			cin>>n;
+		}
+		return head;
+	}
+
+	static int getLength(Node *& head)
+	{
+		if(!head)
+		{
+			return 0;
+		}
+		return 1+getLength(head->next);
+	}
+
+	static Node* deleteNode(Node *head,int position)
+	{
+		int length=getLength(head);
+		if(position>=length)
+			return head;
+
+		if(position==0)
+		{
+			Node* toBeDeleted=head;
+			head=head->next;
+			delete toBeDeleted;
+			return head;
+		}
+
+		int count=0;
+		Node* tHead=head;
+		while(count<position-1)
+		{
+			tHead=tHead->next;
+			count++;
+		}
+
+		Node* toBeDeleted=tHead->next;
+		tHead->next=tHead->next->next;
+		delete toBeDeleted;
+
+		return head;
+	}
+
+	static Node* insertRecursively(Node* head,int position,int value)
+	{
+    if(!head) //NULL
+    	return head;
+
+    if(position==0)
+    {
+    	Node* newNode=new Node(value);
+    	newNode->next=head;
+    	return newNode;
+    }
+    if(position==1)
+    {
+    	Node* newNode=new Node(value);
+    	newNode->next=head->next;
+    	head->next=newNode;
+    	return head;
+    }
+
+    Node*  nextHead=insertRecursively(head->next,position-1,value);
+    head->next=nextHead;
+    return head;
+}
+
+
+
+static Node* append_last_N_to_First(Node* head,int n)
+{
+	Node *fast=head,*slow=head;
+
+	while(n--)
+		fast=fast->next;
+
+	while(fast->next!=NULL)
+	{
+		slow=slow->next;
+		fast=fast->next;
+	}
+	fast->next=head;
+	head=slow->next;
+	slow->next=NULL;
+	return head;
+}
+
+
+static Node* removeSilimar(Node* head)
+{
+	Node *fast=head,*slow=head;  
+	while(fast)  
+	{
+		int current=fast->data;
+		while(fast&&fast->data==current)
+		{
+			fast=fast->next;
+		}
+		slow->next=fast;
+		slow=fast;
+	}
+	return head;
+}
+
+static void printInReverseOrder(Node* head)
+{
+	if(!head)
+		return;
+	printInReverseOrder(head->next);
+	cout<<head->data<<" ";
+}
+
+static Node* reverse(Node* head)
+{
+	Node *next,*prev=NULL,*current=head;
+	while(current)
+	{
+		next=current->next;
+		current->next=prev;
+		prev=current;
+		current=next;
+	}
+	return prev;
+}
+
+static bool isPalindrome(Node* head)
+{
+	Node *fast=head,*slow=head, *prev_slow=slow;
+	while(fast&&fast->next)
+	{
+		prev_slow=slow;
+		slow=slow->next;
+		fast=fast->next->next;
+	}	
+
+	if(fast)//odd
+		prev_slow=slow;
+
+	Node *part1=head;
+	Node *part2=prev_slow->next;
+	prev_slow->next=NULL;
+
+	part2=reverse(part2);
+	while(part1&&part2)
+	{
+		if(part1->data!=part2->data)
+			return false;
+		part1=part1->next;
+		part2=part2->next;
+	}
+	return true;
+}
+
+#define node Node
+static node* midpoint_floor(node *head)
+{
+	if(!head)
+		return head;
+	Node *fast=head, *slow=head->next;
+    while(fast&&fast->next)
+    {
+    	slow=slow->next;
+    	fast=fast->next->next;
+    }
+
+    return slow;
+}
+
+static Node* mergeTwoSorted(Node* A,Node* B)
+{
+	if(!A)
+		return B;
+	if(!B)
+		return A;
+
+	Node *FT,*TL;//front, tail
+	if(A->data <= B->data)
+	{
+		FT=A;
+		TL=A;
+		A=A->next;
+	}
+	else
+	{
+		FT=B;
+		TL=B;
+		B=B->next;
+	}
+
+	while(A && B)
+	{
+		if(A->data <= B->data)
+		{
+			TL->next=A;
+			TL=A;
+			A=A->next;
+		}
+		else
+		{
+			TL->next=B;
+			TL=B;
+			B=B->next;
+		}
+	}
+
+	while(A)
+	{
+		TL->next=A;
+		TL=A;
+		A=A->next;
+	}
+
+	while(B)
+	{
+		TL->next=B;
+		TL=B;
+		B=B->next;
+	}
+
+	return FT;
+}
+
+};
+
+
+
+int main() 
+{
+	std::ios_base::sync_with_stdio(false);
+#ifndef ONLINE_JUDGE
+    // for getting input from input.txt
+	freopen("input.txt", "r", stdin);
+    // for writing output to output.txt
+	freopen("output.txt", "w", stdout);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+	Node *head1=NULL,*head2=NULL;
+	head1=Node::takeInput(head1);
+	head2=Node::takeInput(head2);
+	
+	head1=Node::mergeTwoSorted(head1,head2);
+
+	Node::print(head1);
+}
