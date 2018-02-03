@@ -1,0 +1,16 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+class StackUsingNamespace
+{
+	int *data;
+	int nextIndex;
+	
+public:
+	StackUsingNamespace(int size)
+	{
+		*data=new int[size];
+		nextIndex=0;
+	}
+	
+}
