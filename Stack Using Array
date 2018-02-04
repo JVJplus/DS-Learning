@@ -1,16 +1,111 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-class StackUsingNamespace
+template<typename T>
+class StackUsingArray
 {
-	int *data;
+	T *data;
+	int capacity;
 	int nextIndex;
 	
 public:
-	StackUsingNamespace(int size)
+
+	StackUsingArray()
 	{
-		*data=new int[size];
+		data=new T[4];
 		nextIndex=0;
+		capacity=4;
+	}
+
+	StackUsingArray(int size)
+	{
+		data=new T[size];
+		nextIndex=0;
+		capacity=size;
 	}
 	
+	int size()
+	{
+		return nextIndex;
+	}
+
+	bool isEmpty()
+	{
+		return nextIndex==0;
+	}
+
+	void push(T value)
+	{
+		if(nextIndex>=capacity)
+		{
+			T *newData=new T [2*capacity];
+			for(int i=0;i<capacity;i++)
+				newData[i]=data[i];
+			delete []data;
+			data=newData;
+			capacity*=2;
+		}
+		data[nextIndex]=value;
+		nextIndex++;
+	}
+
+	T pop()
+	{
+		if(nextIndex<0)
+		{
+			cout<<"Stack UnderFlow"<<endl;
+			return 0;
+		}
+		nextIndex--;
+		return data[nextIndex];
+	}
+
+	T top()
+	{
+		if(nextIndex<=0)
+		{
+			cout<<"Stack Empty";
+			return 0;
+		}
+		return data[nextIndex-1];
+	}
+
+	void display()
+	{
+		for(int i=0;i<nextIndex;i++)
+			cout<<data[i]<<" ";
+		cout<<endl;
+	}
+
+};
+
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);    
+#ifndef ONLINE_JUDGE
+    // for getting input from input.txt
+	freopen("input.txt", "r", stdin);
+    // for writing output to output.txt
+	freopen("output.txt", "w", stdout);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+
+
+	StackUsingArray<double> stack;//=new StackUsingArray(10);
+	stack.push(515.0);
+	stack.push(51.58);
+	stack.push(5.520);
+	stack.push(153.0);
+	stack.push(856);
+	stack.push(9.1);
+	stack.push(51.1);
+	stack.push(851.1);
+	stack.push(910);
+
+	cout<<stack.pop()<<endl;
+	stack.display();
+	cout<<stack.size();
+
 }
