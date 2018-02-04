@@ -1,0 +1,108 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+class QueueUsingArray
+{
+	T *data;
+	int size;
+	int capacity;
+	int frontIndex;
+	int nextIndex;
+
+public:
+	QueueUsingArray(int capacity)
+	{
+		this->capacity=capacity;
+		data=new T[capacity];
+		size=0;
+		frontIndex=0;
+		nextIndex=0;
+	}
+
+	bool isEmpty()
+	{
+		return size==0;
+	}
+
+	int getSize()
+	{
+		return size;
+	}
+
+	T front()
+	{
+		if(isEmpty())
+		{
+			cout<<"Queue is Empty"<<endl;
+			return 0;
+		}
+		return data[frontIndex];
+	}
+
+	void enqueue(T value)
+	{
+		if(size==capacity)
+		{
+			cout<<"Queue is Full"<<endl;
+			return;		
+		}
+		data[nextIndex]=value;
+		nextIndex=(nextIndex+1)%capacity;
+		size++;
+	}
+
+	T dequeue()
+	{
+		if(isEmpty())
+		{
+			cout<<"Queue is Empty"<<endl;
+			return 0;
+		}
+		T ans=data[frontIndex];
+		frontIndex=(frontIndex+1)%capacity;
+		size--;
+		return ans;
+	}
+
+	void display()
+	{
+		int t=frontIndex;
+		int i=0;
+		while(i<size)
+		{
+			cout<<data[t]<<" ";
+			i++;
+			t=(t+1)%capacity;
+		}
+		cout<<endl;
+	}
+};
+
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);    
+#ifndef ONLINE_JUDGE
+    // for getting input from input.txt
+	freopen("input.txt", "r", stdin);
+    // for writing output to output.txt
+	freopen("output.txt", "w", stdout);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+
+
+	QueueUsingArray<int> queue(5);
+	queue.enqueue(5);
+	queue.enqueue(6);
+	queue.enqueue(7);
+	queue.enqueue(8);
+	queue.enqueue(9);
+	queue.dequeue();
+	queue.dequeue();
+	queue.enqueue(1);
+	queue.enqueue(1);
+	queue.enqueue(1);
+	queue.display();
+}
