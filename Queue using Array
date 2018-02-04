@@ -11,9 +11,9 @@ class QueueUsingArray
 	int nextIndex;
 
 public:
-	QueueUsingArray(int capacity)
+	QueueUsingArray()
 	{
-		this->capacity=capacity;
+		capacity=2;
 		data=new T[capacity];
 		size=0;
 		frontIndex=0;
@@ -44,9 +44,20 @@ public:
 	{
 		if(size==capacity)
 		{
-			cout<<"Queue is Full"<<endl;
-			return;		
+			T *newData=new T[2*capacity];
+			int j=0;
+			for(int i=frontIndex;i<capacity;i++)
+				newData[j++]=data[i];
+			for(int i=0;i<frontIndex;i++)
+				newData[j++]=data[i];
+
+			delete []data;
+			data=newData;
+			frontIndex=0;
+			nextIndex=capacity;
+			capacity*=2;
 		}
+
 		data[nextIndex]=value;
 		nextIndex=(nextIndex+1)%capacity;
 		size++;
@@ -68,13 +79,8 @@ public:
 	void display()
 	{
 		int t=frontIndex;
-		int i=0;
-		while(i<size)
-		{
-			cout<<data[t]<<" ";
-			i++;
-			t=(t+1)%capacity;
-		}
+		for(int i=frontIndex;i<nextIndex;i++)
+			cout<<data[i]<<" ";
 		cout<<endl;
 	}
 };
@@ -92,17 +98,23 @@ int main()
 #endif
 ///////////////////////////////////////////////////////////////////////////////
 
-
-	QueueUsingArray<int> queue(5);
+	QueueUsingArray<int> queue;
+	queue.enqueue(3);
+	queue.enqueue(4);
 	queue.enqueue(5);
 	queue.enqueue(6);
 	queue.enqueue(7);
 	queue.enqueue(8);
 	queue.enqueue(9);
+	queue.enqueue(10);
+	queue.enqueue(11);
+	queue.enqueue(11);
+	
+	queue.display();
+	
 	queue.dequeue();
 	queue.dequeue();
-	queue.enqueue(1);
-	queue.enqueue(1);
-	queue.enqueue(1);
+	queue.dequeue();
+
 	queue.display();
 }
