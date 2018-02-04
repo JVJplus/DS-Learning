@@ -1,0 +1,129 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+class Node
+{
+public:
+	Node<T> *next;
+	T data;
+	Node(int data)
+	{
+		this->data=data;
+		next=NULL;
+	}
+};
+
+template<typename T>
+class Queue
+{
+	Node<T> *head;
+	Node<T> *tail;
+	int size;
+public:
+	Queue()
+	{
+		size=0;
+		head=NULL;
+		head=NULL;
+	}
+
+	void enqueue(T value)
+	{
+		Node<T> *newNode=new Node<T>(value);
+		size++;
+		if(head==NULL)
+		{	
+			head=newNode;
+			tail=newNode;
+			return;
+		}
+		tail->next=newNode;
+		tail=newNode;
+	}
+
+	T dequeue()
+	{
+		if(tail==NULL)
+		{
+			cout<<"Queue is Empty"<<endl;
+			return 0;
+		}
+
+		size--;
+		Node<T> *toDelete=head;
+		T toReturn=head->data;
+		head=head->next;
+
+		delete toDelete;
+		return toReturn;
+	}
+
+	T front()
+	{
+		if(size==0)
+		{
+
+			cout<<"Queue is Empty"<<endl;
+			return 0;		
+		}
+		return head->data;
+
+	}
+	
+	int getSize()
+	{
+		return size;
+	}
+
+	bool isEmpty()
+	{
+		return size==0;
+	}
+
+	void display()
+	{
+		Node<T> *tHead=head;
+		while(tHead)
+		{
+			cout<<tHead->data<<" ";
+			tHead=tHead->next;
+		}
+		cout<<endl;
+	}
+
+};	
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);    
+#ifndef ONLINE_JUDGE
+    // for getting input from input.txt
+	freopen("input.txt", "r", stdin);
+    // for writing output to output.txt
+	freopen("output.txt", "w", stdout);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+
+	Queue<int> queue;
+	queue.enqueue(3);
+	queue.enqueue(4);
+	queue.enqueue(5);
+	queue.enqueue(6);
+	queue.enqueue(7);
+	queue.enqueue(8);
+	queue.enqueue(9);
+	queue.enqueue(10);
+	queue.enqueue(11);
+	queue.enqueue(11);
+	
+	queue.display();
+	
+	queue.dequeue();
+	queue.dequeue();
+	queue.dequeue();
+
+	queue.display();
+
+}
