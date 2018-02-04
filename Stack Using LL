@@ -1,0 +1,117 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+class Node
+{
+public:
+    T data;
+    Node<T> *next;
+
+    Node(T value)
+    {
+        data=value;
+        next=NULL;
+    }
+};
+
+template <typename T>
+class Stack
+{
+    Node<T> *head;
+    int size;
+public:
+    Stack()
+    {
+        head=NULL;
+        size=0;
+    }
+
+    void push(T data)
+    {
+        Node<T> *newNode=new Node<T>(data);
+        newNode->next=head;
+        head=newNode;
+        size++;
+    }
+
+    T pop()
+    {
+        if(head==NULL)
+        {
+            cout<<"Stack Underflow"<<endl;
+            return 0;
+        }
+
+        size--;
+        T toReturn=head->data;
+        Node<T> *toBeDeleted=head;
+        head=head->next;
+        delete toBeDeleted;
+        return toReturn;
+    }
+
+    T top()
+    {
+        if(head==NULL)
+        {
+            cout<<"Stack is Empty"<<endl;
+            return 0;
+        }
+        return head->data;
+    }
+
+    bool isEmpty()
+    {
+        return head==NULL;
+    }
+
+    int getSize()
+    {
+        return size;
+    }
+
+    void display()
+    {
+        display(head);
+        cout<<endl;
+    }
+    void display(Node<T> *head)
+    {
+        if(!head)
+            return;
+        display(head->next);
+        cout<<head->data<<" ";
+    }
+
+};
+
+int main() 
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);    
+#ifndef ONLINE_JUDGE
+    // for getting input from input.txt
+    freopen("input.txt", "r", stdin);
+    // for writing output to output.txt
+    freopen("output.txt", "w", stdout);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+
+    
+    Stack<double> stack;
+    stack.push(515.0);
+    stack.push(51.58);
+    stack.push(5.520);
+    stack.push(153.0);
+    stack.push(856);
+    stack.push(9.1);
+    stack.push(51.1);
+    stack.push(851.1);
+    stack.push(910);
+
+    cout<<stack.pop()<<endl;
+    stack.display();
+    cout<<stack.getSize();
+    
+}
