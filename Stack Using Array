@@ -24,7 +24,7 @@ public:
 		capacity=size;
 	}
 	
-	int size()
+	int getSize()
 	{
 		return nextIndex;
 	}
@@ -64,7 +64,7 @@ public:
 	{
 		if(nextIndex<=0)
 		{
-			cout<<"Stack Empty";
+			cout<<"Stack is Empty";
 			return 0;
 		}
 		return data[nextIndex-1];
@@ -106,6 +106,6 @@ int main()
 
 	cout<<stack.pop()<<endl;
 	stack.display();
-	cout<<stack.size();
+	cout<<stack.getSize();
 
 }
