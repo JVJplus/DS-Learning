@@ -39,7 +39,7 @@ TreeNode<T>* takeInputDepthWise(TreeNode<T> *root)
 }
 
 template <typename T>
-void displayDepthWise(TreeNode<T> *root)
+void printDepthWise(TreeNode<T> *root)
 {
 	if(root==NULL)
 		return;
@@ -52,7 +52,7 @@ void displayDepthWise(TreeNode<T> *root)
 	cout<<endl;
 
 	for(int i=0;i<root->children.size();i++)
-		displayDepthWise(root->children[i]);
+		printDepthWise(root->children[i]);
 }
 
 template <typename T>
@@ -84,6 +84,59 @@ TreeNode<T>* takeInputLevelWise(TreeNode<T> *root)
 	return root;
 }
 
+template <typename T>
+void displayQueue(queue<TreeNode<T>*> root)
+{
+	while(!root.empty())
+	{
+		cout<<root.front()->data<<" ";
+		root.pop();
+	}
+	cout<<endl;
+}
+
+template <typename T>
+void printLevelWise(TreeNode<T> *root)
+{
+	if(root==NULL)
+		return;
+
+	queue<TreeNode<T>*> pendingNodes;
+	pendingNodes.push(root);
+
+	int i;
+	TreeNode<T> *front;
+	while(!pendingNodes.empty())
+	{
+		front=pendingNodes.front();
+		pendingNodes.pop();
+		cout<<front->data<<":";
+		
+		for(i=0;i<front->children.size();i++) 
+		{
+			cout<<front->children[i]->data;
+			pendingNodes.push(front->children[i]);
+
+			if(i<front->children.size()-1)
+				cout<<",";
+		}
+		cout<<endl;	
+	}
+}
+
+
+template <typename T>
+T sumOfNodes(TreeNode<T>* root) 
+{
+	if(root==NULL)
+      return 0;
+ 	T sum=0; 
+  	
+	queue<TreeNode<T>*> pendingNodes;
+	pendingNodes.push(root);
+
+  
+}
 
 int main()
 {
@@ -98,7 +151,7 @@ int main()
 ///////////////////////////////////////////////////////////////////////////////
 
 	TreeNode<int> *root=new TreeNode<int>();	
-	root=takeInputLevelWise(root);
+	root=takeInputDepthWise(root);
 
-	displayDepthWise(root);
+	printDepthWise(root);
 }
