@@ -1,0 +1,64 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+class Tree
+{
+public:
+	T data;
+	vector<Tree<T>*> children;
+	
+	Tree()
+	{
+	    
+	}
+
+	Tree(T data)
+	{
+		this->data=data;
+	}
+
+	Tree<T>* takeInputDepthWise()
+	{
+		T data;
+		cin>>data;
+		Tree<T> *root=new Tree<T>(data);
+
+		int noOfChild;
+		cin>>noOfChild;
+		for(int i=0;i<noOfChild;i++)
+			root->children.push_back(takeInputDepthWise());
+
+		return root;
+	}
+
+	void displayDepthWise(Tree<T> *root )
+	{
+		cout<<root->data<<" : ";
+		for(int i=0;i<root->children.size();i++)
+			cout<<root->children[i]->data<<",";
+		cout<<endl;
+
+		for(int i=0;i<root->children.size();i++)
+			displayDepthWise(root->children[i]);
+	}
+	
+	void displayDepthWise()
+	{
+	    cout<<this->data<<" : ";
+	    for(int i=0;i<this->children.size();i++)
+			cout<<this->children[i]->data<<",";
+		cout<<endl;
+
+		for(int i=0;i<this->children.size();i++)
+			displayDepthWise(this->children[i]);
+	}
+	
+};
+
+int main()
+{
+	Tree<int> *root=new Tree<int>();
+	root=root->takeInputDepthWise();
+	root->displayDepthWise();
+}
