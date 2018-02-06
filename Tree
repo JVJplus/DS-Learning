@@ -1,0 +1,104 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+class TreeNode
+{
+public:
+	T data;
+	vector<TreeNode*> children;
+
+	TreeNode()
+	{
+
+	}
+
+	TreeNode(T data)
+	{
+		this->data=data;
+	}
+};
+
+template<typename T>
+TreeNode<T>* takeInputDepthWise(TreeNode<T> *root)
+{
+	T rootData;
+	cin>>rootData;
+	root->data=rootData;
+
+	int noOfChild;
+	cin>>noOfChild;
+
+	for(int i=0;i<noOfChild;i++)
+	{
+		TreeNode<T>*child=new TreeNode<T>();
+		child=takeInputDepthWise(child);
+		root->children.push_back(child);
+	}
+	return root;
+}
+
+template <typename T>
+void displayDepthWise(TreeNode<T> *root)
+{
+	if(root==NULL)
+		return;
+
+	cout<<root->data<<" : ";
+	for(int i=0;i<root->children.size();i++)
+	{
+		cout<<root->children[i]->data<<",";
+	}
+	cout<<endl;
+
+	for(int i=0;i<root->children.size();i++)
+		displayDepthWise(root->children[i]);
+}
+
+template <typename T>
+TreeNode<T>* takeInputLevelWise(TreeNode<T> *root)
+{
+	TreeNode<T> *child;
+	queue<TreeNode<T>*> pendingNodes;
+
+	T data;
+	cin>>data;
+	root->data=data;
+	pendingNodes.push(root);
+
+	while(!pendingNodes.empty())
+	{
+		TreeNode<T> *front=pendingNodes.front();
+		pendingNodes.pop();
+		int noOfChild;
+		cin>>noOfChild;
+
+		for (int i = 0; i < noOfChild; ++i)
+		{
+			cin>>data;
+			child=new TreeNode<T>(data);
+			pendingNodes.push(child);
+			front->children.push_back(child);
+		}
+	}
+	return root;
+}
+
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);    
+#ifndef ONLINE_JUDGE
+    // for getting input from input.txt
+	freopen("input.txt", "r", stdin);
+    // for writing output to output.txt
+	freopen("output.txt", "w", stdout);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+
+	TreeNode<int> *root=new TreeNode<int>();	
+	root=takeInputLevelWise(root);
+
+	displayDepthWise(root);
+}
