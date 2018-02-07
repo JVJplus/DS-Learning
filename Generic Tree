@@ -17,6 +17,12 @@ public:
 	{
 		this->data=data;
 	}
+
+	~TreeNode()
+	{
+		for(int i=0;i<children.size();i++)
+			delete children[i];
+	}
 };
 
 template<typename T>
@@ -129,13 +135,93 @@ template <typename T>
 T sumOfNodes(TreeNode<T>* root) 
 {
 	if(root==NULL)
-      return 0;
- 	T sum=0; 
-  	
-	queue<TreeNode<T>*> pendingNodes;
-	pendingNodes.push(root);
+		return 0;
 
-  
+	T sum=0;
+	for(int i=0;i<root->children.size();i++) 
+	{
+		sum+=sumOfNodes(root->children[i]);
+	}
+	return root->data+sum;
+}
+
+template <typename T>
+TreeNode<T>* maxDataNode(TreeNode<T>* root) 
+{
+	TreeNode<T>* largest=root;
+	TreeNode<T>* partSmaller;
+	for (int i = 0; i < root->children.size(); ++i)
+	{
+		partSmaller=maxDataNode(root->children[i]);
+		if(partSmaller->data>largest->data)
+			largest=partSmaller; 
+	}
+	return largest;
+}
+
+
+template<typename T>
+int height(TreeNode<T>* root) {
+	if(root==NULL)
+		return 0;
+	int maxV=0;
+	for(int i=0;i<root->children.size();i++){
+		maxV=max(maxV,height(root->children[i]));
+	}
+	return 1+maxV;
+}
+
+template<typename T>
+void printAtLevelK(TreeNode<T> *root,int K) {
+	if(root==NULL)
+		return;
+	if(K==0)
+	{
+		cout<<root->data<<" ";
+	}	
+	for (int i = 0; i < root->children.size(); ++i)
+	{
+		printAtLevelK(root->children[i],K-1);
+	}
+}
+
+template<typename T>
+int numLeafNodes(TreeNode<T>* root) {
+	if(root==NULL)
+		return 0;
+	if(root->children.size()==0)
+		return 1;
+
+	int count=0;
+	for (int i = 0; i < root->children.size(); ++i)
+	{
+		count+=numLeafNodes(root->children[i]);
+	}
+	return count;
+}
+
+template<typename T>
+void preOrder(TreeNode<T> *root) {
+	if(root==NULL)
+		return ;
+
+	cout<<root->data<<" ";
+	for (int i = 0; i < root->children.size(); ++i)
+	{
+		preorder(root->children[i]);
+	}
+}
+
+template<typename T>
+void postOrder(TreeNode<T> *root) {
+	if(root==NULL)
+		return ;
+
+	for (int i = 0; i < root->children.size(); ++i)
+	{
+		postOrder(root->children[i]);
+	}
+	cout<<root->data<<" ";
 }
 
 int main()
@@ -151,7 +237,9 @@ int main()
 ///////////////////////////////////////////////////////////////////////////////
 
 	TreeNode<int> *root=new TreeNode<int>();	
-	root=takeInputDepthWise(root);
+	root=takeInputLevelWise(root);
+	postOrder(root);	
+	
 
-	printDepthWise(root);
+	delete root;
 }
