@@ -1,0 +1,36 @@
+#include<bits/stdc++.h>
+pair<TreeNode<int>*,TreeNode<int>*>* secondLargestHelper(TreeNode<int> *root)
+{
+	pair<TreeNode<int>*,TreeNode<int>*> *ans=new pair<TreeNode<int>*,TreeNode<int>*>();
+	ans->first=root;
+	TreeNode<int> *nothing=new TreeNode<int>(0);
+	ans->second=nothing;
+
+	for(int i=0;i<root->children.size();i++)
+	{
+		pair<TreeNode<int>*,TreeNode<int>*>* subAns=secondLargestHelper(root->children[i]);
+		
+		if(subAns->first->data > ans->first->data)
+		{
+			if(subAns->second->data > ans->second->data)
+				ans->second=subAns->second;
+			else
+				ans->second=ans->first;
+
+			ans->first=subAns->first;
+		}
+      else
+		{
+			if(subAns->first->data>ans->second->data)
+				ans->second=subAns->first;
+		}
+	}
+	return ans;
+}
+
+TreeNode <int>* secondLargest(TreeNode<int> *root) {
+	pair<TreeNode<int>*,TreeNode<int>*> *ans=secondLargestHelper(root);
+	if(ans->second->data==0)
+		return NULL;
+	return ans->second;
+}
