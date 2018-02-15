@@ -1,0 +1,327 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+template <typename T>
+class BinaryTreeNode
+{
+private:
+	/* data */
+public:
+	T data;
+	BinaryTreeNode *right;
+	BinaryTreeNode *left;
+
+	BinaryTreeNode()
+	{
+		right=NULL;
+		left=NULL;
+	}
+
+	BinaryTreeNode(T data)
+	{
+		this->data=data;
+		right=NULL;
+		left=NULL;
+	}
+
+	~BinaryTreeNode()
+	{
+		delete right;
+		delete left;
+	}
+
+	void printDepthWise(BinaryTreeNode<T> *root)
+	{
+		if(!root)
+			return;
+		cout<<root->data<<":";
+
+		if(root->left)
+			cout<<"L:"<<root->left->data<<" ";
+		if(root->right)
+			cout<<"R:"<<root->right->data<<" ";
+
+		cout<<endl;
+		printDepthWise(root->left);
+		printDepthWise(root->right);
+	}
+
+
+	BinaryTreeNode<T>* takeInputDepthWise()//only for integers
+	{
+		T data;
+		cin>>data;
+		if(data==-1)
+		{
+			return NULL;
+		}
+		BinaryTreeNode<T> *root=new BinaryTreeNode<T>(data);
+		
+		root->left=takeInputDepthWise();
+		root->right=takeInputDepthWise();
+		
+		return root;
+	}	
+
+	BinaryTreeNode<T>* takeInputLevelWise()
+	{
+		T data;
+		cin>>data;
+
+		if(data==-1)
+			return NULL;
+
+		BinaryTreeNode<T>* root=new BinaryTreeNode<T>(data);
+
+		queue<BinaryTreeNode<T>*> pendingNodes;
+		pendingNodes.push(root);
+
+		while(!pendingNodes.empty())
+		{
+			BinaryTreeNode<T>* front=pendingNodes.front();
+			pendingNodes.pop();
+
+			T leftData;
+			cin>>leftData;
+			if(leftData!=-1)
+			{
+				BinaryTreeNode<T>* left=new BinaryTreeNode<T> (leftData);
+				front->left=left;
+				pendingNodes.push(left);
+			}
+
+			T rightData;
+			cin>>rightData;
+			if(rightData!=-1)
+			{
+				BinaryTreeNode<T>* right=new BinaryTreeNode<T> (rightData);
+				front->right=right;
+				pendingNodes.push(right);
+			}			
+		}
+		return root;
+	}
+
+	void printLevelWise(BinaryTreeNode<T> *root)
+	{
+		if(!root)
+			return;
+
+		queue<BinaryTreeNode<T>*> pendingNodes;
+		pendingNodes.push(root);
+
+		while(pendingNodes.size()!=0)
+		{
+			BinaryTreeNode<T> *front=pendingNodes.front();
+			pendingNodes.pop();		
+
+			cout<<front->data<<":";
+
+			if(front->left)
+			{	
+				cout<<"L:"<<front->left->data<<",";
+				pendingNodes.push(front->left);
+			}
+			else 
+				cout<<"L:"<<-1<<",";
+
+			if(front->right)
+			{
+				cout<<"R:"<<front->right->data;
+				pendingNodes.push(front->right);
+			}
+			else
+				cout<<"R:"<<-1;
+
+			cout<<endl;
+
+		}
+	}
+
+	int countNodes(BinaryTreeNode<T> *root)
+	{
+		if(!root)
+			return 0;
+		return 1+countNodes(root->left)+countNodes(root->right);
+	}
+
+	bool isNodePresent(BinaryTreeNode<T>* root, T x) 
+	{
+		if(!root)
+			return false;
+		if(root->data==x)
+			return true;
+
+		if(isNodePresent(root->left,x))
+			return true;
+		if(isNodePresent(root->right,x))
+			return true;
+
+		return false;
+	}
+
+	int height(BinaryTreeNode<T> *root)
+	{
+		if(!root)
+			return 0;
+		return 1+max(height(root->left),height(root->right));
+	}
+
+	void mirrorBinaryTree(BinaryTreeNode<T>* root)
+	{
+		if(!root)
+			return;
+		cout<<root->data<<endl;
+		queue<BinaryTreeNode<T>*> q1,q2;
+		q1.push(root);
+		while(!q1.empty())
+		{
+			while(!q1.empty())
+			{
+				BinaryTreeNode<T>* front=q1.front();
+
+				if(front->right)
+					q2.push(front->right);
+				if(front->left)
+					q2.push(front->left);
+
+				q1.pop();
+			}
+
+			while(!q2.empty())
+			{
+				cout<<q2.front()->data<<" ";
+				q1.push(q2.front());
+				q2.pop();
+			}
+			cout<<endl;
+		}
+
+	}
+
+	void inOrder(BinaryTreeNode<T>* root)
+	{
+		if(!root)
+			return;
+		inOrder(root->left);
+		cout<<root->data<<" ";
+		inOrder(root->right);
+	}
+
+	void preOrder(BinaryTreeNode<T> *root) 
+	{
+		if(!root)
+			return;
+		cout<<root->data<<" ";
+		preOrder(root->left);
+		preOrder(root->right);	
+	}
+
+	void postOrder(BinaryTreeNode<T> *root) 
+	{
+		if(!root)
+			return;
+		postOrder(root->left);
+		postOrder(root->right);	
+		cout<<root->data<<" ";
+	}
+
+	class PairAns 
+	{
+		public :
+		int min;
+		int max;
+	};
+
+
+	PairAns minMax(BinaryTreeNode<int> *root) 
+	{
+		PairAns ans;
+		ans.min=INT_MAX;
+		ans.max=INT_MIN;
+		if(root==NULL)
+		{
+			return ans;
+		}
+		PairAns subAns1=minMax(root->left);
+		PairAns subAns2=minMax(root->right);
+
+		ans.max=max(max(root->data,subAns1.max),subAns2.max);
+		ans.min=min(min(root->data,subAns1.min),subAns2.min);
+		return ans;
+	}
+
+
+	int sumOfAllNodes(BinaryTreeNode<int>* root) {
+		if(!root)
+			return 0;
+		return root->data+sumOfAllNodes(root->left)+sumOfAllNodes(root->right);
+	}
+
+
+	void printLevelWiseSimple(BinaryTreeNode<T>* root)
+	{
+		if(root==NULL)
+			return;
+		queue<BinaryTreeNode*> q;
+		q.push(root);
+		q.push(NULL);
+
+		while(!q.empty())
+		{	
+			BinaryTreeNode* front=q.front();
+			q.pop();
+
+			if(front==NULL)
+			{
+				cout<<endl;
+				if(q.empty())
+					break;
+				q.push(NULL);
+				continue;
+			}
+			cout<<front->data<<" ";
+
+			if(front->left)
+				q.push(front->left);
+			if(front->right)
+				q.push(front->right);
+		}
+	}
+
+	bool isBalanced_UnOptimized(BinaryTreeNode<T> *root) 
+	{
+		if(root==NULL)
+			return true;
+		int a=height(root->left);
+		int b=height(root->right);
+
+		if(abs(a-b)>1)
+			return false;
+
+		return isBalanced(root->left)&&isBalanced(root->right);
+	}
+
+};
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);    
+#ifndef ONLINE_JUDGE
+    // for getting input from input.txt
+	freopen("input.txt", "r", stdin);
+    // for writing output to output.txt
+	freopen("output.txt", "w", stdout);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+
+	BinaryTreeNode<int> *root;
+	root=root->takeInputLevelWise();
+
+	root->preOrder(root);
+	cout<<"\n";
+	root->postOrder(root);
+	cout<<"\n";
+	root->inOrder(root);
+}
