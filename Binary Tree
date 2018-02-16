@@ -302,6 +302,76 @@ public:
 		return isBalanced(root->left)&&isBalanced(root->right);
 	}
 
+	BinaryTreeNode<T>* getTreeFromPreOrderAndInOrder(int *p,int ps,int pe,int *i,int is,int ie) 
+	{
+		if(ps>pe||is>ie)
+			return NULL;
+		int index=is;
+		while(i[index]!=p[ps])
+			index++;
+		int sizeBefore=index-is;
+		int sizeAfter=ie-index;
+
+		BinaryTreeNode<T> *root=new BinaryTreeNode<T>(p[ps]);
+		root->left=getTreeFromPreOrderAndInOrder(p,ps+1,ps+sizeBefore,i,is,index+1);
+		root->right=getTreeFromPreOrderAndInOrder(p,ps+sizeBefore+1,pe,i,index+1,ie);
+		return root;
+	}
+
+	BinaryTreeNode<T>* getTreeFromPreOrderAndInOrder(int *preorder, int preLenght, int *inorder, int inLength) 
+	{
+		return getTreeFromPostOrderAndInOrder(preorder,0,preLenght-1,inorder,0,inLength-1);
+	}
+
+	BinaryTreeNode<T>* getTreeFromPostOrderAndInOrder(int *p,int ps,int pe,int *i,int is,int ie) 
+	{
+		if(ps>pe||is>ie)
+			return NULL;
+
+		int index=is;
+		while(i[index]!=p[pe])
+			index++;
+
+		int sizeBefore=index-is;
+		int sizeAfter=ie-index;
+
+		BinaryTreeNode<int>* root=new BinaryTreeNode<int>(p[pe]);
+		root->left=getTreeFromPostOrderAndInOrder(p,ps,ps+sizeBefore-1,i,is,index-1);
+		root->right=getTreeFromPostOrderAndInOrder(p,ps+sizeBefore,pe-1,i,index+1,ie);
+		return root;
+	}	
+
+
+	BinaryTreeNode<T>* getTreeFromPostOrderAndInOrder(int *postorder, int postLength, int *inorder, int inLength)
+	{
+		return getTreeFromPostOrderAndInOrder(postorder,0,postLength-1,inorder,0,inLength-1);
+	}
+
+	pair<int,int> diameterOfBinaryTreeHelper(BinaryTreeNode<T>* root)
+    {
+        pair<int,int> p;
+        p.first=0;
+        p.second=0;
+        if(!root)
+            return p;
+        
+        pair<int,int> left=diameterOfBinaryTreeHelper(root->left);
+        pair<int,int> right=diameterOfBinaryTreeHelper(root->right);
+        
+        //first=height
+        //second=dimeter
+        p.first=1+max(left.first,right.first);
+        p.second=max(left.first+right.first,max(left.second,right.second));
+        
+        return p;
+    }
+    int diameterOfBinaryTree(BinaryTreeNode<T>* root) 
+    {
+        return diameterOfBinaryTreeHelper(root).second;
+    }
+
+
+
 };
 
 int main()
@@ -309,12 +379,13 @@ int main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);    
 #ifndef ONLINE_JUDGE
-    // for getting input from input.txt
+// for getting input from input.txt
 	freopen("input.txt", "r", stdin);
-    // for writing output to output.txt
+// for writing output to output.txt
 	freopen("output.txt", "w", stdout);
 #endif
 ///////////////////////////////////////////////////////////////////////////////
+
 
 	BinaryTreeNode<int> *root;
 	root=root->takeInputLevelWise();
@@ -324,4 +395,5 @@ int main()
 	root->postOrder(root);
 	cout<<"\n";
 	root->inOrder(root);
+
 }
