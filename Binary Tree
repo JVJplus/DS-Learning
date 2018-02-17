@@ -234,7 +234,7 @@ public:
 	};
 
 
-	PairAns minMax(BinaryTreeNode<int> *root) 
+	PairAns minMax(BinaryTreeNode<T> *root) 
 	{
 		PairAns ans;
 		ans.min=INT_MAX;
@@ -252,7 +252,7 @@ public:
 	}
 
 
-	int sumOfAllNodes(BinaryTreeNode<int>* root) {
+	int sumOfAllNodes(BinaryTreeNode<T>* root) {
 		if(!root)
 			return 0;
 		return root->data+sumOfAllNodes(root->left)+sumOfAllNodes(root->right);
@@ -335,7 +335,7 @@ public:
 		int sizeBefore=index-is;
 		int sizeAfter=ie-index;
 
-		BinaryTreeNode<int>* root=new BinaryTreeNode<int>(p[pe]);
+		BinaryTreeNode<T>* root=new BinaryTreeNode<T>(p[pe]);
 		root->left=getTreeFromPostOrderAndInOrder(p,ps,ps+sizeBefore-1,i,is,index-1);
 		root->right=getTreeFromPostOrderAndInOrder(p,ps+sizeBefore,pe-1,i,index+1,ie);
 		return root;
@@ -348,31 +348,161 @@ public:
 	}
 
 	pair<int,int> diameterOfBinaryTreeHelper(BinaryTreeNode<T>* root)
-    {
-        pair<int,int> p;
-        p.first=0;
-        p.second=0;
-        if(!root)
-            return p;
-        
-        pair<int,int> left=diameterOfBinaryTreeHelper(root->left);
-        pair<int,int> right=diameterOfBinaryTreeHelper(root->right);
-        
+	{
+		pair<int,int> p;
+		p.first=0;
+		p.second=0;
+		if(!root)
+			return p;
+
+		pair<int,int> left=diameterOfBinaryTreeHelper(root->left);
+		pair<int,int> right=diameterOfBinaryTreeHelper(root->right);
+
         //first=height
         //second=dimeter
-        p.first=1+max(left.first,right.first);
-        p.second=max(left.first+right.first,max(left.second,right.second));
-        
-        return p;
-    }
-    int diameterOfBinaryTree(BinaryTreeNode<T>* root) 
-    {
-        return diameterOfBinaryTreeHelper(root).second;
-    }
+		p.first=1+max(left.first,right.first);
+		p.second=max(left.first+right.first,max(left.second,right.second));
+
+		return p;
+	}
+	int diameterOfBinaryTree(BinaryTreeNode<T>* root) 
+	{
+		return diameterOfBinaryTreeHelper(root).second;
+	}
+
+	template<typename R>
+	class node{
+	public:
+		R data;
+		node<R> * next;
+		node(R data){
+			this->data=data;
+			this->next=NULL;
+		}
+	};
+
+
+	vector<node<T>*> createLLForEachLevel(BinaryTreeNode<T> *root) 
+	{
+
+		if(root==NULL)
+		{
+			vector<node<T>*> v;		
+			return v;
+		}
+
+		vector<node<T>*> v;
+		queue<BinaryTreeNode<T>*> q;
+		node<T> *head=NULL;
+		node<T> *tail=head;
+
+		q.push(root);
+		q.push(NULL);
+		while(!q.empty())
+		{
+			BinaryTreeNode<T> *front=q.front();
+			q.pop();
+
+			if(front==NULL)
+			{
+				v.push_back(head);
+				if(q.empty())
+					break;
+
+				q.push(NULL);
+				head=NULL;
+				continue;
+			}
+
+			node<T> *temp=new node<T>(front->data);
+			if(head==NULL)
+			{
+				head=temp;
+				tail=head;
+			}	
+			else
+			{
+				tail->next=temp;
+				tail=tail->next;
+			}
+
+			if(front->left)
+				q.push(front->left);
+			if(front->right)
+				q.push(front->right);
+		}
+		return v;
+	}
+
+	void zigZagOrder(BinaryTreeNode<int> *root) {
+		if(!root)
+			return;
+
+		stack<BinaryTreeNode<T>*> LtoR,RtoL;
+		LtoR.push(root);
+		bool flag=true;
+
+		while(!LtoR.empty() || !RtoL.empty())
+		{
+			if(flag)
+			{
+				if(LtoR.empty())
+				{
+					cout<<endl;
+					flag=!flag;
+					continue;
+				}
+				BinaryTreeNode<T>* top=LtoR.top();
+				LtoR.pop();
+				cout<<top->data<<" ";
+				if(top->left)
+					RtoL.push(top->left);
+				if(top->right)
+					RtoL.push(top->right);
+			}
+			else
+			{
+				if(RtoL.empty())
+				{
+					cout<<endl;
+					flag=!flag;
+					continue;
+				}
+				BinaryTreeNode<T>* top=RtoL.top();
+				RtoL.pop();
+				cout<<top->data<<" ";
+				if(top->right)
+					LtoR.push(top->right);
+				if(top->left)
+					LtoR.push(top->left);
+			}
+		}
+		//would had used swap function https://www.geeksforgeeks.org/zigzag-tree-traversal/
+	}
+
+
+	void nodesWithoutSibling(BinaryTreeNode<T> *root) {
+	//https://algorithms.tutorialhorizon.com/given-a-binary-tree-print-all-the-nodes-that-dont-have-siblings/  
+		if(!root)
+			return;
+		if(root->right==NULL&&root->left)
+			cout<<root->left->data<<endl;
+		if(root->left==NULL&&root->right)
+			cout<<root->right->data<<endl;
+
+		nodesWithoutSibling(root->left);
+		nodesWithoutSibling(root->right);
+	}
 
 
 
 };
+
+void printDateAndTime()
+{
+	time_t curr_time_data = time(NULL);
+	cout << ctime(&curr_time_data);
+}
 
 int main()
 {
@@ -389,11 +519,7 @@ int main()
 
 	BinaryTreeNode<int> *root;
 	root=root->takeInputLevelWise();
+	printDateAndTime();
 
-	root->preOrder(root);
-	cout<<"\n";
-	root->postOrder(root);
-	cout<<"\n";
-	root->inOrder(root);
-
+	root->zigZagOrder(root);
 }
