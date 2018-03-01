@@ -1,0 +1,323 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int highestFrequency(int *input, int n){	 
+	unordered_map<int,int> hash;
+	int MAX=0,ans=0;
+	for(int i=0;i<n;i++)
+	{
+		hash[input[i]]++;
+		if(hash[input[i]]>MAX)
+		{
+			MAX=hash[input[i]];
+			ans=input[i];
+		}
+	}
+
+	return ans;
+
+}
+
+
+
+void printHash(unordered_map<int,int> hash){
+	for(unordered_map<int,int>:: iterator it=hash.begin();it!=hash.end();it++){
+		cout<<it->first<<" : "<<it->second<<endl;
+	}
+}
+
+void printPairs(int *a, int n, int k) {
+	unordered_map<int,int> hash;
+	for(int i=0;i<n;i++){
+		hash[a[i]]++;
+	}
+
+	for (int i = 0; i < n; ++i)
+	{
+		if(k==0)
+		{
+			int count=hash[a[i]];
+			int total=(count*(count-1))/2;
+			for (int j = 0; j < total; ++j)
+			{
+				cout<<a[i]<<" "<<a[i]<<endl;
+			}
+			hash[a[i]]=0;
+		}
+		
+		if(k!=0)
+		{
+			if(hash.count(a[i]-k)>0){
+				for (int j=0;j<hash[a[i]-k];j++){
+					cout<<a[i]-k<<" "<<a[i]<<endl;
+				}	
+			}
+
+			if(hash.count(a[i]+k)>0){
+				for (int j=0;j<hash[a[i]+k];j++){
+					cout<<a[i]<<" "<<a[i]+k<<endl;
+				}	
+			}
+			hash[a[i]]--;
+		}
+	}
+}
+
+int lengthOfLongestSubsetWithZeroSum(int* arr, int size){
+	unordered_map<int,int> hash;
+
+	int sum=0,lar=0;
+	for(int i=0;i<size;i++){
+		sum+=arr[i];
+		if(sum==0)
+			lar=i+1;
+
+		if(hash.find(sum)!=hash.end()){
+			int length=i-hash[sum];
+			lar=max(lar,length);
+		}
+		else
+			hash[sum]=i;
+	}
+	return lar;
+}
+
+int longestSubstrWithoutRepeat(string s) {
+	unordered_map<char,int> hash;
+	int count=0,lar=0;
+	for (int i = 0; i < s.length(); ++i)
+	{
+		if(hash.find(s[i])==hash.end())
+		{
+			hash.insert(make_pair(s[i],i));
+			count++;
+		}
+		else
+		{
+			lar=max(lar,count);
+			int previousIndex=hash[s[i]];
+			i=previousIndex;
+			count=0;
+			hash.clear();
+		}
+	}
+	lar=max(lar,count);
+	return lar;
+}
+
+void pairSum(int input[], int size, int x) {
+	unordered_map<int,int> hash;
+	for (int i = 0; i < size; ++i){
+		hash[input[i]]++;
+	}
+
+	for(unsigned i = 0; i < size; ++i) {
+		if(hash[input[i]]&&hash[x-input[i]]){
+
+			// cout<<":"<<hash[input[i]]<<" "<<hash[x-input[i]]<<endl;
+			int a=hash[input[i]];
+			int b=hash[x-input[i]];
+			int total;
+			total=a*b;
+			if(input[i]==x-input[i])
+				total=(hash[input[i]]*(hash[input[i]]-1))/2;
+
+			for (int j = 0; j < total; ++j)
+			{
+				cout<<min(input[i],x-input[i])<<" "<<max(input[i],x-input[i])<<endl;
+			}
+			hash[input[i]]=0;
+			hash[x-input[i]]=0;
+		}
+	}
+}
+
+int maxDistance(vector<int> input){//max distance between duplicate values
+	unordered_map<int,int> hash;
+	int maxDistance=-1;
+	for (int i = 0; i < input.size(); ++i)
+	{
+		if(hash.find(input[i])==hash.end()){
+			hash.insert(make_pair(input[i],i));
+		}
+		else{
+			int distance=i-hash[input[i]];
+			maxDistance=max(maxDistance,distance);
+		}
+	}
+	return maxDistance==-1?0:maxDistance;
+} 
+
+char nonRepeatingCharacter(string str){
+	unordered_map<int,int> hash;
+	for (int i = 0; i < str.size(); ++i)
+	{
+		hash[str[i]]++;
+	}
+	for (int i = 0; i < str.length(); ++i)
+	{
+		if(hash[str[i]]==1)
+			return str[i];
+	}
+	return str[0];
+}
+
+vector<int> removeDuplicates(vector<int> input){
+	set<int> hash;
+	for(int i=0;i<input.size();i++){
+		hash.insert(input[i]);
+	}	
+	input.clear();
+	for(auto &it:hash){
+		input.push_back(it);
+	}
+	return input;
+}
+
+void FindOccurance(int *arr,int n){
+	/*
+	Count the number of distinct elements with even and odd occurrences 
+	in the given array. Display odd count first and then even count.*/
+
+	unordered_map<int,int> hash;
+	int odd=0,even=0;
+	for (int i = 0; i < n; ++i)
+	{
+		hash[arr[i]]++;
+	}			
+	for(auto &it:hash){
+		if(it.second%2)
+			odd++;
+		else
+			even++;
+	}
+	cout<<odd<<" "<<even<<endl;
+}
+
+int FindDistinctCount(int *arr, int n,int k) {
+/* Find the number of distinct elements left after removing
+ K maximum elements from the given array.*/
+	sort(arr,arr+n);
+	unordered_set<int> hash;
+	for(int i=0;i<n-k;i++){
+		hash.insert(arr[i]);
+	}
+	return hash.size();
+}
+
+int CountExtraElements(int arr[], int n) {
+	/*
+		Find number of elements to be removed to make an array of all distinct elements.
+	*/	
+	unordered_set<int> hash;
+	for (int i = 0; i < n; ++i)
+	{
+		hash.insert(arr[i]);
+	}
+	return n-hash.size();
+}
+
+int LengthOfLongestSeq(int arr[], int n){
+	/*Find and return length of maximum consecutive sequence present in the array.*/
+	int longest=0;
+	unordered_set<int> hash;
+	for (int i = 0; i < n; ++i)
+	{
+		hash.insert(arr[i]);
+	}
+
+	for (int i = 0; i < n; ++i)
+	{
+		if(hash.find(arr[i])!=hash.end()){
+			int count=1;
+			int prev=arr[i]-1,next=arr[i]+1;
+			while(hash.find(prev)!=hash.end()){
+				count++;
+				prev--;
+			}
+			while(hash.find(next)!=hash.end()){
+				count++;
+				next++;
+			}
+			longest=max(longest,count);
+		}
+	}
+	return longest;  
+}
+
+bool CheckDuplicateWithinK(int arr[], int n, int k){
+/*Given an integer array, return true if the array contains
+ duplicate elements within K distance from each other otherwise return false.*/	
+
+	unordered_map<int,int> hash;
+	for(int i=0;i<n;i++){
+		if(hash.find(arr[i])!=hash.end()){
+			int previousIndex=hash[arr[i]];
+			int distance=i-previousIndex;
+			if(distance<=k)
+				return true;
+		}
+		hash[arr[i]]=i;
+	}
+	return false;
+}
+
+void FindMissingElements(int *arr,int n){
+/*
+	Given an array arr[0..n-1] of distinct elements, 
+	find all numbers that are in range, but not in array. 
+	The missing elements should be printed in sorted order.
+*/
+
+	sort(arr,arr+n);
+	unordered_set<int> hash;
+	for(int i=0;i<n;i++){
+		hash.insert(arr[i]);
+	}
+	for(int i=arr[0];i<arr[n-1];i++){
+		if(hash.find(i)==hash.end())
+			cout<<i<<" ";
+	}
+
+}
+
+bool CheckSubset(int *arr,int n,int *arr2,int n2){
+	/*Given two integer arrays. Check if second array is a subset of first array.*/ 
+
+	unordered_map<int,int> hash;
+	for (int i = 0; i < n; ++i)
+	{
+		hash[arr[i]]++;
+	}
+	for(int i=0;i<n2;i++){
+		if(hash[arr2[i]]){
+			hash[arr2[i]]--;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);    
+#ifndef ONLINE_JUDGE
+    // for getting input from input.txt
+	freopen("input.txt", "r", stdin);
+    // for writing output to output.txt
+	freopen("output.txt", "w", stdout);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+
+	int N;
+	cin>>N;
+	int arr[N];
+	for(int i=0;i<N;i++)
+		cin>>arr[i];		
+	
+	cout<<CheckDuplicateWithinK(arr,N,2);
+}
