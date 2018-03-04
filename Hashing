@@ -301,6 +301,27 @@ bool CheckSubset(int *arr,int n,int *arr2,int n2){
 	return true;
 }
 
+int ReturnMinOperationCount(int arr[], int n) {
+/*
+	Given an array with n positive integers. We need to find the minimum number
+ 	of operation to make all elements equal. We can perform addition, multiplication, 
+ 	subtraction or division with any element on an array element.
+*/
+
+    unordered_map<int, int> hash; 
+    for (int i=0; i<n; i++)
+        hash[arr[i]]++;
+ 
+    int max_count = 0;
+    for (auto i : hash)
+        if (max_count < i.second)
+            max_count = i.second;
+ 
+    return (n - max_count); 
+}
+
+9 5
+
 int main()
 {
 	ios_base::sync_with_stdio(false);
