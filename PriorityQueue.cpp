@@ -1,0 +1,422 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+//Min-Heap
+class MinPriorityQueue {
+private:
+	vector<int> pq;
+public:
+	PriorityQueue(){
+		//vector is already installized
+	}
+
+	bool isEmpty(){
+		return pq.size()==0;
+	}
+
+	int getSize(){
+		return pq.size();
+	}
+
+	int getMin(){
+		if(pq.empty())
+			return -1;
+		return pq[0];
+	}
+
+	void display(){
+		for(int i=0;i<pq.size();i++){
+			cout<<pq[i]<<" ";
+		}
+		cout<<endl;
+	}
+
+	void insert(int data){
+		int parentIndex=(pq.size()-1)/2;
+		int childIndex=pq.size();
+		pq.push_back(data);
+		//up heaplify
+		while(parentIndex>=0&&pq[parentIndex]>pq[childIndex]){
+			swap(pq[parentIndex],pq[childIndex]);
+			childIndex=parentIndex;
+			parentIndex=(parentIndex-1)/2;
+		}
+	}
+
+	void clear(){
+		pq.clear();
+	}
+
+
+	void insert_CN(int element) {
+		pq.push_back(element);
+		
+		int childIndex = pq.size() - 1;
+
+		while(childIndex > 0) {
+			int parentIndex = (childIndex - 1) / 2;
+
+			if(pq[childIndex] < pq[parentIndex]) {
+				int temp = pq[childIndex];
+				pq[childIndex] = pq[parentIndex];
+				pq[parentIndex] = temp;
+			}
+			else {
+				break;
+			}
+			childIndex = parentIndex;
+		}
+
+	}
+
+	int removeMin() {
+		if(isEmpty()) {
+			return 0;		// Priority Queue is empty
+		}
+		int ans = pq[0];
+		pq[0] = pq[pq.size() - 1];
+		pq.pop_back();
+
+		// down-heapify
+
+		int parentIndex = 0;
+		int leftChildIndex = 2 * parentIndex + 1;
+		int rightChildIndex = 2 * parentIndex + 2;
+
+		while(leftChildIndex < pq.size()) {
+			int minIndex = parentIndex;
+			if(pq[minIndex] > pq[leftChildIndex]) {
+				minIndex = leftChildIndex;
+			}
+			if(rightChildIndex < pq.size() && pq[rightChildIndex] < pq[minIndex]) {
+				minIndex = rightChildIndex;
+			}
+			if(minIndex == parentIndex) {
+				break;
+			}
+			int temp = pq[minIndex];
+			pq[minIndex] = pq[parentIndex];
+			pq[parentIndex] = temp;
+
+			parentIndex = minIndex;
+			leftChildIndex = 2 * parentIndex + 1;
+			rightChildIndex = 2 * parentIndex + 2;
+		}
+
+		return ans;
+	}
+};
+
+class MaxPriorityQueue {
+private:
+	vector<int> pq;
+public:
+	int getSize(){
+		return pq.size();
+	}
+
+	bool isEmpty(){
+		return pq.empty();
+	}
+
+	void insert(int data){
+		int childIndex=pq.size();
+		int parentIndex=(childIndex-1)/2;
+		pq.push_back(data);
+		while(parentIndex>=0 && pq[parentIndex]<pq[childIndex]){
+			swap(pq[parentIndex],pq[childIndex]);
+			childIndex=parentIndex;
+			parentIndex=(childIndex-1)/2;
+		}
+	}
+
+	int removeMax(){
+		if(isEmpty())
+			return -1;
+
+		int toReturn=pq[0];
+		swap(pq[0],pq[pq.size()-1]);
+		pq.pop_back();
+
+		int parentIndex=0;
+		int leftChildIndex=(2*parentIndex)+1;
+		int rightChildIndex=(2*parentIndex)+2;
+
+		while(leftChildIndex<pq.size()){
+			int maxIndex=parentIndex;
+			if(pq[leftChildIndex] > pq[maxIndex])
+				maxIndex=leftChildIndex;
+			if(rightChildIndex<pq.size() && pq[rightChildIndex] > pq[maxIndex])
+				maxIndex=rightChildIndex;
+
+			if(parentIndex==maxIndex)
+				break;
+			
+			swap(pq[parentIndex],pq[maxIndex]);
+			parentIndex=maxIndex;
+			leftChildIndex=(2*parentIndex)+1;						
+			rightChildIndex=(2*parentIndex)+2;
+		}
+		return toReturn;		
+	}
+
+	int getMax(){
+		if(isEmpty())
+			return -1;
+		return pq[0];
+	}
+
+	void display(){
+		for(int i=0;i<pq.size();i++){
+			cout<<pq[i]<<" ";
+		}
+		cout<<endl;
+	}
+};
+
+void inplaceHeapSort(int* arr,int N){
+	//create min heap
+	for (int i = 0; i < N; ++i){
+		int childIndex=i;
+		int parentIndex=(childIndex-1)/2;
+		while(parentIndex>=0 && arr[parentIndex]>arr[childIndex]){
+			swap(arr[parentIndex],arr[childIndex]);
+			childIndex=parentIndex;
+			parentIndex=(childIndex-1)/2;
+		}
+	}
+
+	//same as remove min 
+	int size=N; //works as a boundary 
+	for (int i = 0; i < N; ++i){
+		swap(arr[0],arr[size-1]);
+		//down heaplify
+		size--;
+		int parentIndex=0;
+		int leftChildIndex=2*parentIndex+1;
+		int rightChildIndex=2*parentIndex+2;
+
+		while(leftChildIndex<size){
+			int minIndex=parentIndex;
+			if(arr[leftChildIndex]<arr[minIndex])
+				minIndex=leftChildIndex;
+			if(rightChildIndex<size && arr[rightChildIndex]<arr[minIndex])
+				minIndex=rightChildIndex;
+
+			if(parentIndex==minIndex)
+				break;
+
+			swap(arr[parentIndex],arr[minIndex]);
+			parentIndex=minIndex;
+			leftChildIndex=2*parentIndex+1;
+			rightChildIndex=2*parentIndex+2;			
+		}
+	}
+
+}
+
+void kSortedArray(int arr[],int n,int k){
+	priority_queue<int,vector<int>,greater<int>> pq;
+	for (int i = 0; i < k; ++i){
+		pq.push(arr[i]);
+	}
+	int index=0;
+	for (int i = k; i < n; ++i){
+		arr[index++]=pq.top();
+		pq.pop();
+		pq.push(arr[i]);
+	}
+	for (int i = 0; i < k; ++i){
+		arr[index++]=pq.top();
+		pq.pop();
+	}
+}
+
+
+vector<int> kSmallest(int *arr, int n, int k) {
+	priority_queue<int> pq;
+	for (int i = 0; i < k; ++i){
+		pq.push(arr[i]);
+	}
+	for (int i = k; i < n; ++i){
+		if(arr[i]<pq.top()){
+			pq.pop();
+			pq.push(arr[i]);
+		}
+	}
+	std::vector<int> v;
+	for(int i=0;i<k;i++){
+		v.push_back(pq.top());
+		pq.pop();
+	}
+	return v;
+}
+
+int kthLargest (vector<int> arr, int n, int k){
+	priority_queue<int,vector<int>,greater<int>> pq;
+	for (int i = 0; i < k; ++i){
+		pq.push(arr[i]);
+	}	
+	for(int i=k;i<n;i++){
+		if(arr[i]>pq.top()){
+			pq.pop();
+			pq.push(arr[i]);
+		}
+	}
+	return pq.top();
+}
+
+bool checkMaxHeap(int arr[], int n){
+	for(int i = 0; i< n; i++){
+		if((2 * i + 1) < n && arr[i] < arr[2 * i + 1]){
+			return false;
+		}
+		if(((2*i+2) < n) && (arr[i] < arr[2*i + 2])){
+			return false;
+		}
+	}
+	return true;
+}
+
+vector<int> mergeKSortedArrays(vector<vector<int>*> input){
+	priority_queue<int,vector<int>,greater<int>> pq; 
+	for(int i=0;i<input.size();i++){
+		for(int j=0;j<input[i]->size();j++){
+			pq.push(input[i]->at(j));
+		}
+	}
+
+	vector<int> ans;
+	while(!pq.empty()){
+		ans.push_back(pq.top());
+		pq.pop();
+	}
+	
+	for (int i = 0; i < ans.size(); ++i){
+		cout<<ans[i]<<" ";
+	}
+	return ans;
+}
+
+int buyTicket (int *arr, int n, int k){
+	int count=0;
+	for (int i = 0; i <= k; ++i){
+		if(arr[i]>=arr[k])
+			count++;
+	}
+
+	for(int i=k+1;i<n;i++){
+		if(arr[i]>arr[k])
+			count++;
+	}
+	return count;
+}
+
+int buyTicket2(int *arr, int n,  int k){
+	priority_queue<int> pq;
+	queue<pair<int,int>> q; //value,index
+
+	for(int i=0;i<n;i++)
+	{
+		q.push(make_pair(arr[i],i));
+		pq.push(arr[i]);
+	}
+
+	int count=0;
+	while(q.empty()==false){
+		if(pq.top()==q.front().first){
+			if(q.front().second==k){
+				return 1+count;
+			}
+			else{
+				count++;
+				pq.pop();
+				q.pop();
+			}
+		}
+		else{
+			pair<int,int> front=q.front();
+			q.pop();
+			q.push(front);
+		}
+	}
+
+	return count;
+}
+
+void findMedian(int arr[], int n){ //running median
+    priority_queue<int, vector<int>, greater <int> > minHeap;
+    priority_queue<int> maxHeap;
+
+    // for each element in the data stream
+    for(int i=0; i < n; i++){
+        if(maxHeap.size() && arr[i] > maxHeap.top()){
+            minHeap.push(arr[i]);
+        }
+        else{
+            maxHeap.push(arr[i]);
+        }
+        if(abs((int)maxHeap.size() - (int)minHeap.size()) > 1){
+            if(maxHeap.size() > minHeap.size()){
+                int temp = maxHeap.top();
+                maxHeap.pop();
+                minHeap.push(temp);
+            }
+            else{
+                int temp = minHeap.top();
+                minHeap.pop();
+                maxHeap.push(temp);
+            }
+        }
+        int median;
+        int totalSize = maxHeap.size() + minHeap.size();
+
+        // when no. of elements are odd
+        if(totalSize % 2  == 1){
+            if(maxHeap.size() > minHeap.size()){
+                median = maxHeap.top();
+            }
+            else{
+                median = minHeap.top();
+            }
+        }
+
+        // when no. of elements are even
+        else {
+                median = 0;
+            if(maxHeap.empty() == false)
+                median += maxHeap.top();
+            if(minHeap.empty() == false)
+                median += minHeap.top();
+            median/=2;
+        }
+
+        cout << median << endl;
+    }
+}
+
+
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);    
+#ifndef ONLINE_JUDGE
+    // for getting input from input.txt
+	freopen("input.txt", "r", stdin);
+    // for writing output to output.txt
+	freopen("output.txt", "w", stdout);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+
+	int N;
+	cin>>N;
+	int arr[N];
+	for(int i=0;i<N;i++)
+		cin>>arr[i];		
+	
+	int K;
+	cin>>K;
+
+	cout<<buyTicket2(arr,N,K);
+}
