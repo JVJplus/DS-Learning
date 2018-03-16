@@ -1,0 +1,775 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+//BF => Brute Force Technique
+//DP => Dynamic Programming Bottom Up Approach
+//Momo|r|ization => Top Down Approach 
+
+int nthFibo(int n,int *arr){
+	if(n<=1){
+		arr[n]=n;
+		return n;
+	}
+
+	if(arr[n-1]==INT_MIN)
+		arr[n-1]=nthFibo(n-1,arr);		
+	if(arr[n-2]=INT_MIN)
+		arr[n-2]=nthFibo(n-2,arr);		
+
+	arr[n]=arr[n-1]+arr[n-2];
+	return arr[n];
+}
+
+int nthFibo(int n){ //memorization
+	int *arr=new int[n+1];
+	for (int i = 0; i < n+1; ++i){
+		arr[i]=INT_MIN;
+	}
+	int ans=nthFibo(n,arr);
+	delete arr;
+	return ans;
+}
+
+int nthFiboDP(int n){
+	int *arr=new int[n+1];
+	arr[0]=0;
+	arr[1]=1;
+	for (int i = 2; i <=n; ++i){
+		arr[i]=arr[i-1]+arr[i-2];
+	}
+	return arr[n];
+}
+
+int nthFiboSlow(int n){ //for comparison with DP
+	if(n<=1)
+		return n;
+	return nthFiboSlow(n-1)+nthFiboSlow(n-2);
+}
+
+int countStepsTo1_BF(int n){ //Brute Force
+	if(n<=1)
+		return 0;
+	
+	int a,b=INT_MAX,c=INT_MAX;
+	a=countStepsTo1_BF(n-1);
+	b=n%2==0?countStepsTo1_BF(n/2):b;
+	c=n%3==0?countStepsTo1_BF(n/3):c;
+	return min(a,min(b,c))+1;
+}
+
+int countStepsTo1_DP(int n){
+	
+	int arr[n+1];
+	arr[0]=0;
+	arr[1]=0;
+	arr[2]=1;
+	arr[3]=1;
+
+	for (int i = 4; i <=n; ++i){
+		int a=arr[i-1];
+		int b=i%2==0?arr[i/2]:INT_MAX;
+		int c=i%3==0?arr[i/3]:INT_MAX;
+		int MIN=min(a,min(b,c));
+		arr[i]=MIN+1;
+	}
+	return arr[n];
+}
+
+int countStepsTo1_Memorization(int n,int *arr){
+	if(n<=1){
+		arr[n]=0;
+		return 0;
+	}
+	int a=INT_MAX,b=INT_MAX,c=INT_MAX;
+	
+	if(arr[n-1]!=INT_MIN)
+		a=arr[n-1];
+	else{
+		a=countStepsTo1_Memorization(n-1,arr);
+		arr[n-1]=a;
+	}
+
+	if(n%2==0){
+		if(arr[n/2]!=INT_MIN)
+			b=arr[n/2];
+		else
+		{
+			b=countStepsTo1_Memorization(n/2,arr);
+			arr[n/2]=b;
+		}
+	}
+
+	if(n%3==0){
+		if(arr[n/3]!=INT_MIN)
+			c=arr[n/3];
+		else
+		{
+			c=countStepsTo1_Memorization(n/3,arr);
+			arr[n/3]=b;
+		}
+	}
+	return min(a,min(b,c))+1;
+}
+
+int countStepsTo1_Memorization(int n){
+	string s="";
+	int arr[n+1];
+	for (int i = 0; i < n+1; ++i){
+		arr[i]=INT_MIN;
+	}
+
+	return countStepsTo1_Memorization(n,arr);
+}
+
+long staircase_BF(int n){
+	if(n<0)
+		return 0;
+	if(n<=1)
+		return 1;
+	return staircase_BF(n-1)+staircase_BF(n-2)+staircase_BF(n-3);
+}
+
+long long int staircase_DP(int n){
+	long long int arr[n+1];
+	arr[0]=0;
+	arr[1]=1;
+	arr[2]=2;
+	arr[3]=4;
+	
+	for (int i = 4; i <=n; ++i){
+		arr[i]=arr[i-1]+arr[i-2]+arr[i-3];
+	}
+	return arr[n];	
+}
+
+
+int minCount_Greedy(int n){
+	/*
+	Given an integer N, find and return the count of minimum numbers,
+	 sum of whose squares is equal to N.
+That is, if N is 4, then we can represent it as : {1^2 + 1^2 + 1^2 + 1^2} 
+and {2^2}. Output will be 1, as 1 is the minimum count of numbers required.
+Eg: 12=3, 2^2 + 2^2 +2^2
+*/
+	int sq=sqrt(n);
+	int count=0,sum=0;
+	while(sum!=n){
+		if(sum+(sq*sq)<=n){
+			sum+=sq*sq;
+			count++;
+		}
+		else
+			sq--;
+	}    
+	return count;
+}
+
+
+int minCount_BF(int n){
+	if(n<=1)
+		return n;
+	int MIN=INT_MAX;
+	for(int i=1;i<=sqrt(n);i++)
+		MIN=min(MIN,1+minCount_BF(n-(i*i)));
+	return MIN;
+}
+
+int minCount_Memoization(int n,int *arr){
+	if(n<=1){
+		arr[n]=n;
+		return n;
+	}
+
+	int MIN=INT_MAX;
+	for (int i = 1; i <= sqrt(n); ++i){
+		if(arr[n-(i*i)]==INT_MAX){
+			MIN=min(MIN,minCount_Memoization(n-(i*i),arr));
+		}
+		else{
+			MIN=min(MIN,arr[n-(i*i)]);
+		}
+	}
+	arr[n]=MIN+1;
+	return arr[n];
+}
+
+int minCount_Memoization(int n){
+	int arr[n+1];
+	for(int i=0;i<=n;i++)
+		arr[i]=INT_MAX;
+	
+	return minCount_Memoization(n,arr);
+}
+
+int minCount_DP(int n){
+	if(n<=1){
+		return n;
+	}
+
+	int arr[n+1];
+	arr[0]=0;
+	arr[1]=1;
+
+	int MIN;
+	for(int i=2;i<=n;i++){
+		MIN=INT_MAX;
+		for(int j=1;j<=sqrt(i);j++){	
+			MIN=min(MIN,arr[i-j*j]);
+		}
+		arr[i]=1+MIN;
+	}
+	return arr[n];
+}
+
+long long int  balancedBTs_BF(int h){
+	// Formula: f(h)= f(h-1)*f(h-1) + f(h-1)*f(h-2) + f(h-2)*f(h-1)
+	if(h<=1)
+		return 1;
+	long long int x=(balancedBTs_BF(h-1))%1000000007;
+	long long int y=(balancedBTs_BF(h-2))%1000000007;
+
+	return  (((x*x)%1000000007)+(2*(x*y)))%1000000007;
+}
+
+int balancedBTs_DP(int h){
+	long long int  arr[h+1];
+	arr[0]=arr[1]=1;
+	for (int i = 2; i <= h; ++i){
+		arr[i]= ((arr[i-1]*arr[i-1])%1000000007+
+			(arr[i-1]*arr[i-2])%1000000007+
+			(arr[i-2]*arr[i-1])%1000000007)%1000000007;
+	}
+	return arr[h];
+}
+
+bool isValidPath(int x,int y, int m, int n){
+	if(x<0||y<0)
+		return false;
+	if(x>=m || y>=n)
+		return false;
+	return true;
+}
+
+int minCostPath_Memoization(int **arr, int **dp, int m, int n, int x, int y){
+	if(x==m-1 && y==n-1){
+		dp[x][y]=arr[x][y];
+		return arr[x][y];
+	}
+
+	int MIN=INT_MAX;
+
+	if(dp[x][y]!=INT_MIN)
+		return dp[x][y];
+
+	//can be done without isValidPath() func. by returning INT_MAX in invalid case
+	//can check it before putting in the dp.
+	
+	if(isValidPath(x,y+1,m,n)){//left
+		if(dp[x][y+1]==INT_MIN)
+			dp[x][y+1]=minCostPath_Memoization(arr,dp,m,n,x,y+1);
+		MIN=min(MIN,dp[x][y+1]);
+	}
+
+	if(isValidPath(x+1,y+1,m,n)){//diagonal
+		if(dp[x+1][y+1]==INT_MIN)
+			dp[x+1][y+1]=minCostPath_Memoization(arr,dp,m,n,x+1,y+1);
+		MIN=min(MIN,dp[x+1][y+1]);
+	}
+
+	if(isValidPath(x+1,y,m,n)){//down
+		if(dp[x+1][y]==INT_MIN)
+			dp[x+1][y]=minCostPath_Memoization(arr,dp,m,n,x+1,y);
+		MIN=min(MIN,dp[x+1][y]);
+	}
+
+	dp[x][y]=arr[x][y]+MIN;
+	return dp[x][y];
+}
+
+
+int minCostPath_BF(int **arr, int m, int n, int x, int y) {
+	if(x>=m || y>=n)	
+		return INT_MAX;
+	if(x==m-1 && y==n-1){
+		return arr[x][y];
+	}
+
+	int MIN=INT_MAX;
+	MIN=min(MIN,minCostPath_BF(arr,m,n,x,y+1));
+	MIN=min(MIN,minCostPath_BF(arr,m,n,x+1,y+1));
+	MIN=min(MIN,minCostPath_BF(arr,m,n,x+1,y));
+	return arr[x][y]+MIN;
+}
+
+int minCostPath_DP(int **arr,int m,int n){
+	int dp[m][n];
+	dp[m-1][n-1]=arr[m-1][n-1];
+
+	for(int i=m-1;i>=0;i--){
+		for(int j=n-1;j>=0;j--){
+			if(i==m-1 && j==n-1)
+				continue;
+			int MIN=INT_MAX;
+			if(i<m&&j+1<n)//left
+				MIN=min(MIN,dp[i][j+1]);
+			if(i+1<m&&j+1<n)//dia
+				MIN=min(MIN,dp[i+1][j+1]);
+			if(i+1<m&&j<n)//down
+				MIN=min(MIN,dp[i+1][j]);
+			dp[i][j]=arr[i][j]+MIN;
+		}
+	}
+	return dp[0][0];
+}
+
+void minCostPath(){
+	int m,n;
+	cin>>m>>n;
+
+	//dynamic 2d array allocation
+	int **arr=new int*[m];
+	int **dp=new int*[m];
+	for (int i = 0; i < m; ++i){
+		arr[i]=new int[n];
+		dp[i]=new int[n];
+		for (int j = 0; j < n; ++j){
+			cin>>arr[i][j];
+			dp[i][j]=INT_MIN;
+		}
+	}
+
+	cout<<minCostPath_DP(arr,m,n);
+
+	//deallocate
+	for (int i = 0; i < m; ++i){
+		delete [] arr[i];
+		delete [] dp[i];
+	}
+	delete [] arr;
+	delete [] dp;
+}
+
+int LCS_BF(string s1, string s2){
+	if(s1.empty() || s2.empty())
+		return 0;
+
+	if(s1[0]==s2[0]){
+		return 1+LCS_BF(s1.substr(1),s2.substr(1));
+	}		
+
+	int a=LCS_BF(s1.substr(1),s2);
+	int b=LCS_BF(s1,s2.substr(1));
+	return max(a,b);
+}
+
+int LCS_Memoization(string s1,string s2, int **dp){
+	if(s1.empty() || s2.empty())
+		return 0;
+	
+	int length1=s1.length();
+	int length2=s2.length();
+
+	//helpful bcz i have to not check for -1 later on		
+	if(dp[length1][length2]!=-1)
+		return dp[length1][length2];
+
+	if(s1[0]==s2[0]){
+
+		if(dp[length1-1][length2-1] == -1)
+			dp[length1-1][length2-1] = LCS_Memoization(s1.substr(1),s2.substr(1),dp);
+
+		dp[length1][length2] = 1 + dp[length1-1][length2-1];
+		return dp[length1][length2];
+	}
+
+	dp[length1][length2-1] = LCS_Memoization(s1, s2.substr(1) , dp);
+	dp[length1-1][length2] = LCS_Memoization(s1.substr(1), s2, dp);
+
+	return max( dp[length1][length2-1], dp[length1-1][length2] );
+}
+
+int LCS_DP(string s1, string s2){
+
+	int m=s1.length(),n=s2.length();
+	int dp[m+1][n+1];
+
+	for(int i=0; i<=m; i++){
+		for(int j=0; j<=n; j++){			
+			if(i==0||j==0){
+				dp[i][j]=0;
+				continue;
+			}
+
+			if(s1[m-i]==s2[n-j]){
+				dp[i][j] = 1 + dp[i-1][j-1]; 
+			}
+			else{
+				dp[i][j]= max( dp[i-1][j], dp[i][j-1] );
+			}
+		}
+	}
+
+	int i=m,j=n;
+	string lcs="";
+	while(i>0 && j>0){
+		
+		if(s1[i-1] == s2[j-1]){
+			lcs = s1[i-1] + lcs;
+			i--;
+			j--;
+		}
+		else if(dp[i-1][j] > dp[i][j-1])
+			i--;
+		else
+			j--;
+
+	}
+	cout<<"Word is : "<<lcs<<endl;
+
+	return dp[m][n];
+}
+
+int editDistance_BF(string s1, string s2){
+	if(s1.empty())
+		return s2.length();
+	if(s2.empty())
+		return  s1.length();
+
+	if(s1[0]==s2[0])
+		return editDistance_BF(s1.substr(1), s2.substr(1));
+
+	int a=editDistance_BF(s1.substr(1), s2); //
+	int b=editDistance_BF(s1, s2.substr(1)); //
+	int c=editDistance_BF(s1.substr(1), s2.substr(1)); //
+	return 1+min(a, min(b,c));
+}
+
+int editDistance_Memoization(string s1, string s2, int **dp){
+	int m=s1.length(), n=s2.length();
+	if(min(m,n)==0)
+		return max(m,n);
+
+	if(dp[m][n] != -1)
+		return dp[m][n];
+
+	if(s1[0]==s2[0]){
+		dp[m-1][n-1]=editDistance_Memoization(s1.substr(1), s2.substr(1), dp);
+		dp[m][n] = 0 + dp[m-1][n-1];
+		return dp[m][n];
+	}
+
+	//no need to check for -1 bcz already this case is handled by !=-1 above
+	dp[m][n-1]=editDistance_Memoization(s1, s2.substr(1), dp);
+	dp[m-1][n]=editDistance_Memoization(s1.substr(1), s2, dp);
+	dp[m-1][n-1]=editDistance_Memoization(s1.substr(1), s2.substr(1), dp);
+
+
+	dp[m][n] = 1 + min( dp[m][n-1] ,min( dp[m-1][n] , dp[m-1][n-1] ));
+	return dp[m][n];
+}
+
+int editDistance_DP(string s1, string s2){
+	int m=s1.length(), n=s2.length();
+
+	int dp[m+1][n+1];
+
+	for(int i=0; i<=m; i++){
+		for(int j=0; j<=n; j++){			
+			if(i==0 || j==0){//tricky
+				dp[i][j]=max(i,j);
+				continue;
+			}
+
+			if(s1[m-i] == s2[n-j]){
+				dp[i][j] = dp[i-1][j-1];
+			}
+			else{
+				dp[i][j] = 1 + min(dp[i-1][j] , min(dp[i][j-1], dp[i-1][j-1]));
+			}
+		}
+	}
+	return dp[m][n];
+}
+
+int knapsack_BF(int* weights, int* values, int n, int maxWeight){
+	if(maxWeight <= 0 || n<=0)
+		return 0;
+	if(weights[0] > maxWeight){
+		return knapsack_BF(weights+1, values+1, n-1, maxWeight);
+	}	
+
+	int a = values[0]+ knapsack_BF(weights+1, values+1, n-1, maxWeight-weights[0]);
+	int b = knapsack_BF(weights+1, values+1, n-1, maxWeight);
+
+	return max(a,b);
+}
+
+int knapsack_Memoization(int *weights, int *values, int N, int maxWeight, int **dp){
+
+
+}
+
+int getMaxMoney_BF(int arr[], int n){
+	if(n<=0)	
+		return 0;
+	int a=arr[n-1]+getMaxMoney_BF(arr, n-2);
+	int b=getMaxMoney_BF(arr, n-1);
+	return max(a,b);
+}
+
+int getMaxMoney_Memoization(int arr[], int N, int *dp){
+	if(N <= 0)
+		return 0;
+
+	if(dp[N] != -1)
+		return dp[N];
+
+	int a=getMaxMoney_Memoization(arr, N-1, dp);
+	dp[N-1]=a;
+	int b=getMaxMoney_Memoization(arr, N-2, dp);
+	dp[N-2]=b;
+
+	dp[N] = max( arr[N-1]+b, a);
+
+	return dp[N];
+}
+
+int getMaxMoney_DP(int *arr, int N){
+	if(N==0)
+		return 0;
+	if(N==1)
+		return arr[0];
+	
+	int prevPrev,prev;
+	prevPrev=arr[0];
+	prev=max(arr[0],arr[1]);
+	int answer=prev;
+
+	for (int i = 2; i < N; ++i){
+		answer=max(arr[i]+prevPrev , prev);
+		prevPrev=prev;
+		prev=answer;
+	}
+	return answer;
+}
+
+int LIS_DP(int *arr, int N) {
+	int LISEndingHere[N];
+	int ans=0;
+
+	for(int i = 0; i < N; i++){
+		int maxCount=0;
+		for(int j = i-1; j >= 0; j--){			
+			if(arr[j] < arr[i])
+				maxCount = max(maxCount,LISEndingHere[j]);
+		}
+		LISEndingHere[i] = maxCount + 1;
+		ans=max(ans,LISEndingHere[i]);
+	}
+
+	return ans;
+}
+	/*
+	Given two integers a and b. You need to find and return the 
+	count of possible ways in which we can represent the number a as the 
+	sum of unique integers raise to the power b.
+	For eg. if a = 10 and b = 2, only way to represent 10 as -
+	10 = 1^2 + 3^2 
+	Hence, answer is 1.
+	100, 2 => 3
+	*/
+
+int all_ways(int sum, int power){
+	//TODO again
+}
+
+
+int coinChange(int *arr, int n, int value){
+	if(value==0){
+		return 1;
+	}
+
+	if(n<=0 || value<0)
+		return 0;
+
+	return coinChange(arr+1 , n-1, value) + coinChange(arr, n, value-arr[0]);
+}
+
+int coinChange_Memoization(int *arr, int n, int value, unordered_map< string ,int> &lookup){
+	if(value==0)
+		return 1;
+
+	if(n<=0 || value<0)
+		return 0;
+
+	string toFind=to_string(n)+"|"+to_string(value);
+	if(lookup.find(toFind)==lookup.end()){
+		int include=coinChange_Memoization(arr, n, value-arr[0], lookup );
+		int exclude=coinChange_Memoization(arr+1, n-1, value, lookup );
+
+		lookup[toFind] = include + exclude;
+	}
+	return lookup[toFind];
+}
+
+int coinChange_Memoization(int *arr, int n, int value){
+	unordered_map< string, int> lookup;
+	return coinChange_Memoization(arr,n,value,lookup);
+}
+
+int coinChange_DP(int *arr, int n, int value){
+	int dp[value+1][n];
+	for (int i = 0; i < n; ++i){
+		dp[0][i]=1;
+	}
+
+	for(int i = 1; i <= value; i++){
+		for(int j = 0; j < n; j++){			
+			int count1=0,count2=0;
+
+			if(j-1 >=0 )
+				count1=dp[i][j-1];
+
+			if(i-arr[j]>=0)
+				count2=dp[i-arr[j]][j];
+
+			dp[i][j]=count1+count2;	
+		}
+	}
+
+	return dp[value][n-1];
+}
+
+int mcm_BF_helper(int *arr, int start, int end){
+	if(start==end)
+		return 0;
+
+	int MIN=INT_MAX,temp;
+	for(int i=start; i<end;i++)
+	{	
+		temp=mcm_BF_helper(arr, start, i) +
+		mcm_BF_helper(arr, i+1, end) +
+		arr[start-1]*arr[i]*arr[end];
+		MIN=min(MIN,temp);
+	}
+	return MIN;
+}
+
+int mcm_BF(int *arr, int n){
+	return mcm_BF_helper(arr,1,n-1);
+}
+
+int mcm_memoization_helper(int *arr, int start, int end, int **dp){
+	if(start==end){
+		dp[start][end]=0;
+		return 0;
+	}
+
+	if(dp[start][end]!=-1)
+		return dp[start][end];
+
+	int MIN=INT_MAX,temp;
+	for(int i=start; i<end; i++){
+		temp=mcm_memoization_helper(arr,start,i,dp) +
+		mcm_memoization_helper(arr,i+1,end,dp) +
+		arr[start-1]*arr[i]*arr[end];
+		MIN=min(MIN,temp);
+	}		
+	dp[start][end]=MIN;
+	return dp[start][end];
+}
+
+int mcm_memoization(int *arr, int n){
+	int **dp=new int*[n];
+	for(int i = 0; i < n; i++){
+		dp[i]=new int[n];
+		for(int j = 0; j < n; j++){			
+			dp[i][j]=-1;
+		}
+	}
+	
+	mcm_memoization_helper(arr, 1, n-1, dp);
+/*	
+	for(int i = 0; i < n; i++){
+		for(int j = 0; j < n; j++){			
+			cout<<dp[i][j]<<"\t";
+		}
+		cout<<endl;
+	}	
+*/	
+	return dp[1][n-1];
+}
+
+int mcm_DP(int *arr, int n){
+	int dp[n][n];
+	//[i,j] represents from matrix i to j minimum brackets required
+
+	//diagonal ie base is 0 when matrix is only 1 
+	for(int i=0;i<n;i++)
+		dp[i][i]=0; //L = 1  is already done here
+
+	
+	int temp;
+	for(int x,y,i=2;i<n;i++){
+		for(int j=1;j<n-i+1;j++){
+			x=j;
+			y=x+i-1;
+			dp[x][y]=INT_MAX;
+
+			for(int k=x;k<y;k++){
+				temp = dp[x][k] + dp[k+1][y] + 
+				arr[x-1]*arr[k]*arr[y];
+				dp[x][y] = min(dp[x][y],temp);
+			}
+		}
+	}
+/*
+	for(int i = 0; i < n; i++){
+		for(int j = 0; j < n; j++){			
+			cout<<dp[i][j]<<"\t";
+		}
+		cout<<endl;
+	}
+	*/
+
+	return dp[1][n-1];
+}
+
+
+int findMaxSquareWithAllZeros(int** arr, int row, int col){
+	int dp[row][col];
+	for(int i = 0; i < row; i++){
+		for(int j = 0; j < col; j++){	
+			dp[i][j]= i==0|| j==0 ? 0 : 1 + min(dp[i-1][j-1], dp[i][j-1]);
+			MAX=max(dp[i][j],MAX);		
+		}
+	}
+	return MAX;	
+}
+
+string coinTower(int n, int k, int l)
+{
+	int a[n+1]={0};
+	a[0]=0;
+	a[1]=1;
+
+	for(int i=2;i<=n;i++)
+	{
+		if(!a[i-1])
+			a[i]=1;
+		if(i-k>=0&&!a[i-k])
+			a[i]=1;
+		if(i-l>=0&&!a[i-l])
+			a[i]=1;
+	}
+
+	if(!a[n])
+		return "Whis";
+	else
+		return "Beerus";
+}
+
+int main()
+{
+    
+}
