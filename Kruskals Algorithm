@@ -1,0 +1,88 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+class Edge
+{
+public:
+	int source,dest,weight;
+	Edge(int source,int dest,int weight){
+		this->source=source;
+		this->dest=dest;
+		this->weight=weight;
+	}
+};
+
+bool comp(Edge a, Edge b){
+	return a.weight < b.weight;
+}
+
+const int SIZE=pow(10,5)+5;
+int parent[SIZE];
+
+void _makeSet(){
+	for (int i = 0; i < SIZE; ++i){
+		parent[i]=i;
+	}
+}
+
+int root(int index){
+	while(parent[index]!=index){
+		// parent[index] = parent[ parent[index] ];
+		index=parent[index];
+	}
+	return index;
+}
+
+bool isCycle(int A,int B){
+	return root(A)==root(B);
+}
+
+void _union(int A,int B){
+	int PA=root(A);
+	int PB=root(B);
+	parent[PA]=PB;
+}
+
+int main()
+{
+	_makeSet();
+
+	int x,y,w;
+	int V,E;
+	cin>>V>>E;
+
+	vector<Edge> input;
+	for (int i = 0; i < E; ++i){
+		cin >> x >> y >> w;
+		Edge e={x,y,w};
+		input.push_back(e);
+	}
+
+	sort(input.begin(), input.end(),comp);
+
+	int totalEdgesConnected=0,i=0;
+	vector<Edge> output;
+	while(i<E && totalEdgesConnected < V-1){
+		
+		Edge current=input[i];
+		i++;
+		
+		int edgeA=current.source;
+		int edgeB=current.dest;
+
+		if(isCycle(edgeA,edgeB)){
+			continue;	
+		}
+		else{
+			output.push_back(current);
+			_union(edgeA,edgeB);
+		}
+
+	}
+	for (int i = 0; i < output.size(); ++i){
+      cout<<min(output[i].source,output[i].dest)<<" ";
+      cout<<max(output[i].source,output[i].dest)<<" ";
+      cout<<output[i].weight<<endl;
+	}
+
+}
