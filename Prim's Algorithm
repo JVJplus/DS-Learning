@@ -1,0 +1,79 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+void prims(int **graph,int V,int E){
+	bool visited[V];
+	int parent[V],weight[V];
+	for (int i = 0; i < V; ++i){
+		visited[i]=false;
+
+		parent[i]=-1;
+		weight[i]=INT_MAX;
+	}
+
+	//starting vertex == 0
+	int currentVertex=0;
+	visited[0]=true;
+	weight[0]=0;
+	int count=1;
+
+	while(currentVertex!=-1){
+		
+		for(int i=0;i<V;i++){ //find adjancent vertex
+			if(graph[currentVertex][i]!=0 && visited[i]==false){
+				
+				if(weight[i] > graph[currentVertex][i]){
+					weight[i]=graph[currentVertex][i];
+					parent[i]=currentVertex;
+				}
+
+			}
+		}
+
+		int MIN=INT_MAX;
+		int MIN_Vertex=-1;
+		for (int i = 0; i < V; ++i){
+			if(visited[i]==false && weight[i] < MIN){
+				MIN=weight[i];
+				MIN_Vertex=i;
+			}
+		}
+
+	count++;
+	visited[currentVertex]=true;
+	currentVertex=MIN_Vertex;
+}
+
+for (int i = 1; i < V; ++i){
+		// cout << i<< " "<< parent[i]<< " ";
+	cout<<min(parent[i],i)<<" ";
+	cout<<max(parent[i],i)<<" ";
+	cout<<weight[i]<<endl;
+}
+
+}
+
+int main()
+{
+	int V,E;
+	cin>>V>>E;
+
+	int x,y,w;
+
+	int **graph=new int*[V];
+	for(int i = 0; i < V; i++){
+		graph[i]=new int[V];
+		for(int j = 0; j < V; j++){			
+			graph[i][j]=0;
+		}
+	}
+	
+
+	for (int i = 0; i < E; ++i){
+		cin>>x>>y>>w;
+		graph[x][y]=w;
+		graph[y][x]=w;
+	}
+
+	prims(graph,V,E);
+}
