@@ -1,79 +1,113 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-void prims(int **graph,int V,int E){
-	bool visited[V];
-	int parent[V],weight[V];
-	for (int i = 0; i < V; ++i){
-		visited[i]=false;
+void prims(vector<pair<int,int>> adj[],int V,int E){
+	vector<int> parents(V,-1);
+	vector<int> weight(V,INT_MAX);	
+	vector<bool> visited(V,false);
 
-		parent[i]=-1;
-		weight[i]=INT_MAX;
+	parents[0]=0;
+	weight[0]=0;
+
+	for (int j = 0; j < V; ++j){
+		int minIndex=-1;
+		for (int i = 0; i < V; ++i){
+			if(!visited[i] && (minIndex==-1 || weight[i]<weight[minIndex]))
+				minIndex=i;
+		}
+		visited[minIndex]=1;
+
+		for (int i = 0; i < adj[minIndex].size(); ++i){
+			int cValue=adj[minIndex][i].first;
+			int cWeight=adj[minIndex][i].second;
+
+			if(visited[cValue]==false && weight[cValue] > cWeight){
+				weight[cValue]=cWeight;
+				parents[cValue]=minIndex;
+			}
+		}
+
+		/*cout<<minIndex<<":";
+		for (int i = 0; i < V; ++i){
+			cout << weight[i] << " ";
+		}
+		cout<<endl;*/
 	}
 
-	//starting vertex == 0
-	int currentVertex=0;
-	visited[0]=true;
+	for (int i = 1; i < V; ++i){
+		cout<<min(i,parents[i])<<" "<<max(i,parents[i])<<" "<<weight[i]<<endl;
+	}
+
+}
+
+void prims_PQ(vector<pair<int,int>> adj[], int V,int E){
+	vector<bool> visited(V,false);
+	vector<int> parents(V,-1);
+	vector<int> weight(V,INT_MAX);
+
+	priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
+	pq.push(make_pair(0,0));
 	weight[0]=0;
-	int count=1;
+	parents[0]=-1;
 
-	while(currentVertex!=-1){
-		
-		for(int i=0;i<V;i++){ //find adjancent vertex
-			if(graph[currentVertex][i]!=0 && visited[i]==false){
-				
-				if(weight[i] > graph[currentVertex][i]){
-					weight[i]=graph[currentVertex][i];
-					parent[i]=currentVertex;
-				}
+	while(!pq.empty()){
+		int minIndex=pq.top().second;
+		pq.pop();
+		visited[minIndex]=1;
 
+		for (int i = 0; i < adj[minIndex].size(); ++i){
+			int cValue=adj[minIndex][i].first;
+			int cWeight=adj[minIndex][i].second;
+
+			if(visited[cValue]==false && weight[cValue] > cWeight){
+				weight[cValue]=cWeight;
+				parents[cValue]=minIndex;
+				pq.push(make_pair(cWeight,cValue));
 			}
 		}
 
-		int MIN=INT_MAX;
-		int MIN_Vertex=-1;
-		for (int i = 0; i < V; ++i){
-			if(visited[i]==false && weight[i] < MIN){
-				MIN=weight[i];
-				MIN_Vertex=i;
-			}
-		}
+	}
 
-	count++;
-	visited[currentVertex]=true;
-	currentVertex=MIN_Vertex;
-}
-
-for (int i = 1; i < V; ++i){
-		// cout << i<< " "<< parent[i]<< " ";
-	cout<<min(parent[i],i)<<" ";
-	cout<<max(parent[i],i)<<" ";
-	cout<<weight[i]<<endl;
-}
+	for (int i = 1; i < V; ++i){
+		cout<<min(i,parents[i])<<" "<<max(i,parents[i])<<" "<<weight[i]<<endl;
+	}
 
 }
 
 int main()
 {
-	int V,E;
-	cin>>V>>E;
-
-	int x,y,w;
-
-	int **graph=new int*[V];
-	for(int i = 0; i < V; i++){
-		graph[i]=new int[V];
-		for(int j = 0; j < V; j++){			
-			graph[i][j]=0;
-		}
-	}
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);    
+	#ifndef ONLINE_JUDGE
+	// for getting input from input.txt
+	freopen("input.txt", "r", stdin);
+	// for writing output to output.txt
+	freopen("output.txt", "w", stdout);
+	#endif
+	///////////////////////////////////////////////////////////////////////////////
 	
 
+	int V,E;
+	cin >> V >> E;
+	vector< pair<int,int> > adj[V];
+
 	for (int i = 0; i < E; ++i){
+		int x,y,w;
 		cin>>x>>y>>w;
-		graph[x][y]=w;
-		graph[y][x]=w;
+		adj[x].push_back(make_pair(y,w));
+		adj[y].push_back(make_pair(x,w));
 	}
 
-	prims(graph,V,E);
+	/*for (int i = 0; i < V; ++i){
+		for (int j = 0; j < adj[i].size(); ++j){
+			cout<<adj[i][j].first<<" ";
+		}
+		cout<<endl;
+	}
+	cout<<endl;
+	*/
+
+	prims(adj,V,E);	
+	cout<<endl;
+	prims_PQ(adj,V,E);	
 }
