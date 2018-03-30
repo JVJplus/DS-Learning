@@ -1,0 +1,109 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#defineINF 0x3f3f3f3f
+#define SIZE 100010
+typedef pair<int,int> ii;
+vector<ii> adj[SIZE];
+
+void dijkstra(int V,int source){
+	vector<int> distance(V,INF);
+	vector<bool> visited(V,false);
+
+	distance[source]=0;
+	for (int j = 0; j < V; ++j){
+		
+		//minIndex
+		int minIndex=0,minValue=INF;
+		for (int i = 0; i < V; ++i){
+			if(visited[i]==false && distance[i]<minValue)
+				minValue=distance[i], minIndex=i;
+		}
+		visited[minIndex]=true;
+
+		for (int i = 0; i < adj[minIndex].size(); ++i){
+			int cValue=adj[minIndex][i].first;
+			int cDist=adj[minIndex][i].second;
+			if(visited[cValue]==false && distance[cValue] > distance[minIndex]+cDist)
+				distance[cValue]=distance[minIndex]+cDist;
+		}
+/*
+		cout << minIndex<<" : ";
+		for (int i = 0; i < V; ++i){
+			cout<<distance[i]<<" ";
+		}
+		cout<<endl;*/
+	}
+
+	for (int i = 0; i < V; ++i){
+		cout<<i<< " "<<distance[i]<<endl;
+	}
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);    
+	#ifndef ONLINE_JUDGE
+	// for getting input from input.txt
+	freopen("input.txt", "r", stdin);
+	// for writing output to output.txt
+	freopen("output.txt", "w", stdout);
+	#endif
+	///////////////////////////////////////////////////////////////////////////////
+
+
+	int V,E,x,y,w;
+	cin>>V>>E;
+
+	for (int i = 0; i < E; ++i){
+		cin>>x>>y>>w;
+		adj[x].push_back({y,w});
+		adj[y].push_back({x,w});
+	}
+
+	/*for(int i = 0; i < V; i++){
+		for(int j = 0; j < adj[i].size(); j++){			
+			cout << adj[i][j].first << " ";
+		}
+		cout<<endl;
+	}
+*/
+	dijkstra(V,0);
+}
+
+
+vector<vector<ii>> graph;
+int dijkstra_bt_2(int u,int v){
+	priority_queue< ii,vector<ii>,greater<ii> >pq;
+	vector<bool> visited(graph.size(),false);
+	vector<int> distance(graph.size(),INF);
+
+	distance[u]=0;
+	pq.push({0,u});
+
+	while(!pq.empty()){
+		int minDist=pq.top().first;
+		int minVertex=pq.top().second;
+		pq.pop();
+
+		if(visited[minVertex]==false)
+			for (int i = 0; i < graph[minVertex].size(); ++i){
+				int curVertex=graph[minVertex][i].first;		
+				int curDist=graph[minVertex][i].second;		
+
+				if(curVertex==minVertex)
+					continue;
+
+				if(visited[curVertex])
+					continue;
+
+				if(distance[minVertex]+curDist < distance[curVertex])
+					distance[curVertex]=distance[minVertex]+curDist,		
+					pq.push({distance[curVertex],curVertex});			
+			}
+			visited[minVertex]=1;		
+		}
+
+		return distance[v]==INF?-1:distance[v];
+	}
