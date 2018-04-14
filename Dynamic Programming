@@ -1,6 +1,69 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+// Input macros
+#define s(n)                        scanf("%d",&n)
+#define sc(n)                       scanf("%c",&n)
+#define sl(n)                       scanf("%lld",&n)
+#define sf(n)                       scanf("%lf",&n)
+#define ss(n)                       getline(cin,n); //scanf("%s",n)
+
+#define fi first
+#define se second
+#define INF 0x3f3f3f3f
+#define pb push_back
+typedef long long int ll; 
+typedef pair<int,int> ii;
+
+#define For(i,b)                  	for(int i=0;i<b;i++)
+#define FoR(i,a,b)                  for(int i=a;i>=b;i--)
+#define FOR(i,a,b)                  for(int i=a;i<b;i++)
+#define foreach(v, c)               for( auto v:c)
+//#define foreach(v, c)             for( auto v = (c).begin();  v != (c).end(); ++v)
+#define min3(a,b,c) 					min(a,min(b,c))
+#define min4(a,b,c,d) 					min(min(a,b),min(c,d))
+#define all(a)                      a.begin(), a.end()
+#define fill(a,v)                    memset(a, v, sizeof a)
+
+typedef pair<int,int> ii;
+typedef vector<int> vi; 
+typedef vector<bool> vb;
+typedef vector<vi> vvi; 
+typedef vector<ii> vp;
+
+#define pq_max priority_queue<int>
+#define pq_min priority_queue<int,vector<int>,greater<int>>
+
+#define whileNE(x) while(!x.empty())
+#define present(c,x) ((c).find(x) != (c).end()) 
+#define mp make_pair
+// directions
+const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
+const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
+// Some common useful functions
+#define maX                     INF
+#define miN                     INT_MIN
+#define checkbit(n,b)                ( (n >> b) & 1)
+#define INDEX(arr,ind)               (lower_bound(all(arr),ind)-arr.begin())
+
+#define TCase int T; s(T); while(T--) // the same as above
+#define REMAX(a,b) (a)=max((a),(b)) // set a to the maximum of a and b
+#define REMIN(a,b) (a)=min((a),(b));
+#define PI 3.1415926535897932384626
+#define MOD 1000000007
+#define SIZE(a)      (int)(a.size())
+#define LEN(a)       (int)(a.length())
+
+#define print(x) cout<<x;
+#define print2(x,y) cout<<x<<" "<<y;
+#define println(x) cout<<x<<'\n';
+#define printA(arr,length) for(int i=0;i<length;i++) cout<<arr[i]<<" "; println("");
+#define printAB(arr,start,length) for(int i=start;i<length;i++) cout<<arr[i]<<" "; println("");
+
+#define debug(x)                cerr << #x << ": " << x << endl;
+#define debug2(x, y)             cerr << #x << ": " << x << " | " << #y << ": " << y << endl;
+
+
 //BF => Brute Force Technique
 //DP => Dynamic Programming Bottom Up Approach
 //Momo|r|ization => Top Down Approach 
@@ -390,44 +453,72 @@ int LCS_Memoization(string s1,string s2, int **dp){
 
 int LCS_DP(string s1, string s2){
 
-	int m=s1.length(),n=s2.length();
-	int dp[m+1][n+1];
-
-	for(int i=0; i<=m; i++){
-		for(int j=0; j<=n; j++){			
-			if(i==0||j==0){
+	int length1=s1.length(),length2=s2.length();
+	int dp[s1.length()+1][s2.length()+1];
+	For(i,s1.length()+1){
+		For(j,s2.length()+1){
+			if(i==0 || j==0){
 				dp[i][j]=0;
 				continue;
 			}
 
-			if(s1[m-i]==s2[n-j]){
-				dp[i][j] = 1 + dp[i-1][j-1]; 
-			}
-			else{
-				dp[i][j]= max( dp[i-1][j], dp[i][j-1] );
-			}
+			if(s1[i-1]==s2[j-1])
+				dp[i][j]=1+dp[i-1][j-1];
+			else
+				dp[i][j]=max(dp[i-1][j],dp[i][j-1]);
 		}
 	}
 
-	int i=m,j=n;
-	string lcs="";
-	while(i>0 && j>0){
-		
-		if(s1[i-1] == s2[j-1]){
-			lcs = s1[i-1] + lcs;
-			i--;
-			j--;
+	//print
+	string ans="";
+	int x=length1,y=length2;
+	while(x>0 && y>0){
+		if(s1[x-1] == s2[y-1]){
+			ans=s1[x-1]+ans;
+			x--;
+			y--;
 		}
-		else if(dp[i-1][j] > dp[i][j-1])
-			i--;
+		else if(dp[x-1][y] > dp[x][y-1])
+			x--;
 		else
-			j--;
-
+			y--;
 	}
-	cout<<"Word is : "<<lcs<<endl;
+	cout<<ans<<endl;
 
-	return dp[m][n];
+	//matrix
+	/*for (int i = 0; i < 1+length1; ++i){
+		for (int j = 0; j < 1+length2; ++j){
+			cout<<dp[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+	*/
+
+	return dp[length1][length2];
 }
+
+int lcsubstring(string s1,string s2){
+	// cout<<" : "<<s1<<" "<<s2<<endl;
+	int length1=s1.length(),length2=s2.length();
+	int dp[s1.length()+1][s2.length()+1];
+	int Max=0;
+	For(i,s1.length()+1){
+		For(j,s2.length()+1){
+			if(i==0 || j==0){
+				dp[i][j]=0;
+				continue;
+			}
+
+			if(s1[i-1]==s2[j-1])
+				dp[i][j]=1+dp[i-1][j-1],max(Max,dp[i][j]);
+			else
+				dp[i][j]=0;
+		}
+	}
+
+	return Max;
+}
+
 
 int editDistance_BF(string s1, string s2){
 	if(s1.empty())
@@ -492,21 +583,62 @@ int editDistance_DP(string s1, string s2){
 }
 
 int knapsack_BF(int* weights, int* values, int n, int maxWeight){
-	if(maxWeight <= 0 || n<=0)
+	if (n == 0 || maxWeight == 0) {
 		return 0;
-	if(weights[0] > maxWeight){
-		return knapsack_BF(weights+1, values+1, n-1, maxWeight);
-	}	
+	}
 
-	int a = values[0]+ knapsack_BF(weights+1, values+1, n-1, maxWeight-weights[0]);
-	int b = knapsack_BF(weights+1, values+1, n-1, maxWeight);
-
-	return max(a,b);
+	if (weights[n-1] > maxWeight) {
+		return knapsack(weights, values, n-1, maxWeight);
+	}
+	else {
+		int ans=max(values[n-1] + knapsack(weights, values, n-1, maxWeight-weights[n-1]),
+			knapsack(weights, values, n-1, maxWeight));
+		return ans;
+	}
 }
 
-int knapsack_Memoization(int *weights, int *values, int N, int maxWeight, int **dp){
+int knapsack_Memoization(int* weights, int* values, int n, int maxWeight){
+	if (n == 0 || maxWeight == 0) {
+		return 0;
+	}
 
+	if(dp[n][maxWeight]!=-1)
+		return dp[n][maxWeight];
 
+	if (weights[n-1] > maxWeight) {
+		dp[n-1][maxWeight]=knapsack(weights, values, n-1, maxWeight);
+		return dp[n-1][maxWeight];
+	}
+	else {
+		int ans=max(values[n-1] + knapsack(weights, values, n-1, maxWeight-weights[n-1]),
+			knapsack(weights, values, n-1, maxWeight));
+		dp[n][maxWeight]=ans;
+		return ans;
+	}
+}
+
+int knapsack_DP(int *values,int *weights,int N,int maxW){
+	int dp[N+1][maxW+1];
+	for(int i = 0; i < N+1; i++){
+		for(int j = 0; j < maxW+1; j++){			
+			if(i==0 || j==0)
+				dp[i][j]=0;
+			else if(j < weights[i-1])
+				dp[i][j]=dp[i-1][j];
+			else
+				dp[i][j]=max(values[i-1]+dp[i-1][j-weights[i-1]] ,dp[i-1][j]);	
+		}		
+	}
+/*
+	for(int i = 0; i < N+1; i++){
+		for(int j = 0; j < maxW+1; j++){			
+			cout<<left<<setw(3)<<dp[i][j]<<" ";
+		}
+		cout<<endl;
+	}*/
+	
+
+	return dp[N][maxW];
 }
 
 int getMaxMoney_BF(int arr[], int n){
@@ -569,6 +701,52 @@ int LIS_DP(int *arr, int N) {
 
 	return ans;
 }
+
+void displayLIS(int *arr,int *dp,int index,int MAX,int value,vi &v){
+	if(index<0)
+		return;
+	if(MAX==1 && dp[index]==1 && arr[index]<value){
+		v.pb(arr[index]);
+		FoR(i,v.size()-1,0)
+		cout<<v[i]<<" ";
+		cout<<endl;
+		v.pop_back();
+		return;
+	}
+
+	if(dp[index]==MAX && arr[index]<value){
+		v.pb(arr[index]);
+		displayLIS(arr,dp,index-1,MAX-1,arr[index],v);
+		v.pop_back();
+	}
+
+	displayLIS(arr,dp,index-1,MAX,value,v);
+}
+
+int lis(int arr[], int n) {
+	int dp[n];
+	int MAX=miN;
+	For(i,n){
+
+		int prevValue=miN;
+		int j=i-1;
+		while(j>=0){
+			if(arr[j]<arr[i])
+				REMAX(prevValue,dp[j]);
+			j--;
+		}
+		if(prevValue==miN)
+			prevValue=0;
+		dp[i]=1+prevValue;
+		REMAX(MAX,dp[i]);
+	}
+
+	vi v;
+	displayLIS(arr,dp,n-1,MAX,maX,v);
+	return MAX;
+}
+
+
 	/*
 	Given two integers a and b. You need to find and return the 
 	count of possible ways in which we can represent the number a as the 
@@ -771,5 +949,17 @@ string coinTower(int n, int k, int l)
 
 int main()
 {
-    
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);    
+#ifndef ONLINE_JUDGE
+    // for getting input from input.txt
+	freopen("input.txt", "r", stdin);
+    // for writing output to output.txt
+	freopen("output.txt", "w", stdout);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+
+	
+	
+
 }
