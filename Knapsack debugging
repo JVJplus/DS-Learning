@@ -1,0 +1,134 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+// Input macros
+#define s(n)                        scanf("%d",&n)
+#define sc(n)                       scanf("%c",&n)
+#define sl(n)                       scanf("%lld",&n)
+#define sf(n)                       scanf("%lf",&n)
+#define ss(n)                       getline(cin,n); //scanf("%s",n)
+
+#define fi first
+#define se second
+#define INF 0x3f3f3f3f
+#define pb push_back
+typedef long long int ll; 
+typedef pair<int,int> ii;
+
+#define For(i,b)                  	for(int i=0;i<b;i++)
+#define FoR(i,a,b)                  for(int i=a;i>=b;i--)
+#define FOR(i,a,b)                  for(int i=a;i<b;i++)
+#define foreach(v, c)               for( auto v:c)
+//#define foreach(v, c)             for( auto v = (c).begin();  v != (c).end(); ++v)
+#define min3(a,b,c) 					min(a,min(b,c))
+#define min4(a,b,c,d) 					min(min(a,b),min(c,d))
+#define all(a)                      a.begin(), a.end()
+#define fill(a,v)                    memset(a, v, sizeof a)
+
+typedef pair<int,int> ii;
+typedef vector<int> vi; 
+typedef vector<bool> vb;
+typedef vector<vi> vvi; 
+typedef vector<ii> vp;
+
+#define pq_max priority_queue<int>
+#define pq_min priority_queue<int,vector<int>,greater<int>>
+
+#define whileNE(x) while(!x.empty())
+#define present(c,x) ((c).find(x) != (c).end()) 
+#define mp make_pair
+// directions
+const int fx[4][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}};
+const int fxx[8][2] = {{0,1}, {0,-1}, {1,0}, {-1,0}, {1,1}, {1,-1}, {-1,1}, {-1,-1}};
+// Some common useful functions
+#define maX                     INF
+#define miN                     INT_MIN
+#define checkbit(n,b)                ( (n >> b) & 1)
+#define INDEX(arr,ind)               (lower_bound(all(arr),ind)-arr.begin())
+
+#define TCase int T; s(T); while(T--) // the same as above
+#define REMAX(a,b) (a)=max((a),(b)) // set a to the maximum of a and b
+#define REMIN(a,b) (a)=min((a),(b));
+#define PI 3.1415926535897932384626
+#define MOD 1000000007
+#define SIZE(a)      (int)(a.size())
+#define LEN(a)       (int)(a.length())
+
+#define print(x) cout<<x;
+#define print2(x,y) cout<<x<<" "<<y;
+#define println(x) cout<<x<<'\n';
+#define printA(arr,length) for(int i=0;i<length;i++) cout<<arr[i]<<" "; println("");
+#define printAB(arr,start,length) for(int i=start;i<length;i++) cout<<arr[i]<<" "; println("");
+
+#define debug(x)                cerr << #x << ": " << x << endl;
+#define debug2(x, y)             cerr << #x << ": " << x << " | " << #y << ": " << y << endl;
+
+
+int knapsack2(int* weights, int* values, int n, int maxWeight,int money=0,int index=0){
+	if(index>=n || maxWeight<=0)
+		return money;
+
+	int a=INT_MIN,b=INT_MIN;
+	if(maxWeight-weights[index]>=0)
+		a=knapsack2(weights,values,n,maxWeight-weights[index],money+values[index],index+1);
+	
+	b=knapsack2(weights,values,n,maxWeight,money,index+1);
+	
+	return max(a,b);
+}
+
+int knapsack(int* weights, int* values, int n, int maxWeight){
+	cout<<n<<" "<<maxWeight<<endl;
+
+	if (n == 0 || maxWeight == 0) {
+		return 0;
+	}
+	if (weights[n-1] > maxWeight) {
+		return knapsack(weights, values, n-1, maxWeight);
+	}
+	else 
+		return max(values[n-1] + knapsack(weights, values, n-1, maxWeight-weights[n-1]),
+		knapsack(weights, values, n-1, maxWeight));
+}
+
+
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);    
+#ifndef ONLINE_JUDGE
+    // for getting input from input.txt
+	freopen("input.txt", "r", stdin);
+    // for writing output to output.txt
+	freopen("output.txt", "w", stdout);
+#endif
+///////////////////////////////////////////////////////////////////////////////
+
+	int N;
+	cin>>N;
+	int values[N],weights[N];
+	for(int i=0;i<N;i++)
+		cin>>weights[i];
+	for(int i=0;i<N;i++)
+		cin>>values[i];
+	
+	int maxW;	
+	cin>>maxW;
+
+	cout<<knapsack(weights,values,N,maxW);
+
+	unordered_map<string,int> hash;
+	
+	ifstream file;
+	file.open("output.txt");
+	string s;
+	ofstream outfile;
+	outfile.open("output2.txt");
+	while(getline(file,s)){
+		hash[s]++;
+	}
+	foreach(i,hash){
+		outfile<<left<<setw(4)<<i.first<<" : "<<i.second<<endl;
+	}
+}
