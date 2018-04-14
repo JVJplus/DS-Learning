@@ -77,18 +77,29 @@ int knapsack2(int* weights, int* values, int n, int maxWeight,int money=0,int in
 	return max(a,b);
 }
 
+int dp[100][100];
+int counter=0;
 int knapsack(int* weights, int* values, int n, int maxWeight){
-	cout<<n<<" "<<maxWeight<<endl;
-
 	if (n == 0 || maxWeight == 0) {
 		return 0;
 	}
+
+	if(dp[n][maxWeight]!=-1)
+		return dp[n][maxWeight];
+
+	counter++;
+	cout<<left<<setw(5)<<n<<maxWeight<<endl;
+
 	if (weights[n-1] > maxWeight) {
-		return knapsack(weights, values, n-1, maxWeight);
+		dp[n-1][maxWeight]=knapsack(weights, values, n-1, maxWeight);
+		return dp[n-1][maxWeight];
 	}
-	else 
-		return max(values[n-1] + knapsack(weights, values, n-1, maxWeight-weights[n-1]),
+	else {
+		int ans=max(values[n-1] + knapsack(weights, values, n-1, maxWeight-weights[n-1]),
 			knapsack(weights, values, n-1, maxWeight));
+		dp[n][maxWeight]=ans;
+		return ans;
+	}
 }
 
 
@@ -116,10 +127,16 @@ int main()
 	int maxW;	
 	cin>>maxW;
 
-	cout<<knapsack(weights,values,N,maxW);
+	for(int i = 0; i < 100; i++){
+		for(int j = 0; j < 100; j++){			
+			dp[i][j]=-1;
+		}
+	}
+
+	cout<<knapsack(weights,values,N,maxW)<<endl;
+	cout<<"count:"<<counter;
 
 	unordered_map<string,int> hash;
-	
 	ifstream file;
 	file.open("output.txt");
 	string s;
@@ -142,8 +159,8 @@ int main()
 
 /*
 Sample Input:
-10
-1 7 2 4 3 6 8 2 5 2
-5 7 5 6 8 4 1 3 7 5
-15
+20
+1 7 2 4 3 6 8 2 5 2 1 7 2 4 3 6 8 2 5 2
+5 7 5 6 8 4 1 3 7 5 5 7 5 6 8 4 1 3 7 5
+50
 */
