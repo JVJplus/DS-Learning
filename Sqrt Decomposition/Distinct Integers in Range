@@ -1,0 +1,125 @@
+//TLE
+//https://www.hackerearth.com/practice/data-structures/advanced-data-structures/segment-trees/practice-problems/algorithm/distinct-integers-in-range-66eca44b/description/#c170880
+
+#include<bits/stdc++.h>
+using namespace std;
+
+#define For(i,n) for(int i=0;i<n;i++)
+#define FOR(i,a,b) for(int i=a;i<=b;i++)
+#define ll long long int
+#define pii pair<int,int>
+#define fi first
+#define se second
+#define pb push_back
+#define vi vector<int> 
+#define N 100005
+#define MOD 1000000007 //check it 
+#define dbg(x) cerr<<#x<<" "<<x<<endl;
+
+//make ipow and ms0
+//think of segtree
+
+int n;
+int arr1[N];
+int arr2[N];
+int length;
+bitset<50005> block1[500];
+bitset<50005> block2[500];
+
+void init(){
+	length=sqrt(n)+1;
+	For(i,n){
+		block1[i/length].set(arr1[i]);
+		block2[i/length].set(arr2[i]);
+	}
+}
+
+bitset<50005> q1(int l,int r){
+	int b1=l/length;
+	int b2=r/length;
+
+	bitset<50005> ans;
+	if(b1==b2){
+		FOR(i,l,r)
+			ans.set(arr1[i]);
+		return ans;
+	}
+
+	//1st block
+	for(int i=l,end=(b1+1)*length-1;i<=end;i++)
+		ans.set(arr1[i]);
+	//mid blocks
+	for(int i=(b1+1);i<=b2-1;i++)
+		ans=ans|block1[i];
+	//last block
+	for(int i=b2*length;i<=r;i++)
+		ans.set(arr1[i]);
+
+	return ans;
+}
+
+bitset<50005> q2(int l,int r){
+	int b1=l/length;
+	int b2=r/length;
+
+	bitset<50005> ans;
+	if(b1==b2){
+		FOR(i,l,r)
+			ans.set(arr2[i]);
+		return ans;
+	}
+
+	//1st block
+	for(int i=l,end=(b1+1)*length-1;i<=end;i++)
+		ans.set(arr2[i]);
+	//mid blocks
+	for(int i=(b1+1);i<=b2-1;i++)
+		ans=ans|block2[i];
+	//last block
+	for(int i=b2*length;i<=r;i++)
+		ans.set(arr2[i]);
+
+	return ans;
+}
+
+void solve(){
+	cin>>n;
+	For(i,n)
+		cin>>arr1[i];
+	For(i,n)
+		cin>>arr2[i];
+	init();
+
+	int q;
+	cin>>q;
+	For(i,q){
+		int a,b,c,d;
+		cin>>a>>b>>c>>d;
+		a--,b--,c--,d--;
+		cout<< (q1(a,b) | q2(c,d) ).count() <<endl;
+	}
+}
+
+
+int main(){
+
+	   	// /*
+	
+	freopen("input.txt","r",stdin);
+	freopen("output.txt","w",stdout);
+	freopen("debug_log.txt","w",stderr);
+	
+	      // */
+
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+
+
+    // int t; cin>>t; while(t--)
+	{ 
+		solve();   
+	}
+
+}
