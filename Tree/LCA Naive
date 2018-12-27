@@ -1,0 +1,149 @@
+//https://codeforces.com/blog/entry/16221
+//https://www.spoj.com/problems/LCA/
+
+/* Test Input 
+1
+
+17
+3 2 3 4
+1 5
+2 7 6
+2 8 9
+2 17 16
+1 12 
+1 10
+0
+1 15
+1 11
+0
+2 13 14
+0 
+0
+0
+0
+0
+
+10
+17 16
+17 13
+5 9
+10 11
+10 5
+10 13
+1 3
+1 12
+5 9
+13 14
+*/
+
+
+/***********************
+*   Jay Prakash Mahto  *
+*       JVJplus        *
+************************/
+
+#include<bits/stdc++.h>
+using namespace std;
+
+#define For(i,n) for(int i=0;i<n;i++)
+#define FOR(i,a,b) for(int i=a;i<=b;i++)
+#define ll long long int
+#define pii pair<int,int>
+#define fi first
+#define se second
+#define pb push_back
+#define vi vector<int> 
+#define N 1005
+#define MOD 1000000007 //check it 
+#define dbg(x) cerr<<#x<<" "<<x<<endl;
+
+//make ipow and ms0
+//think of segtree / sqrt decom.
+
+int n;
+int arr[N];
+int height[N];
+int parent[N];
+
+vi adj[N];
+
+void init(){
+    For(i,N){
+        adj[i].clear();
+    }
+}
+
+void dfs(int u,int p){
+    height[u]=height[p]+1;
+    parent[u]=p;
+
+    for(auto x:adj[u]){
+        if(x!=p)//similar to p!=x
+            dfs(x,u);
+    }
+}
+
+void pre(){
+    int root=1;
+    height[root]=-1;
+    dfs(root,root);
+}
+
+int lca(int u,int v){
+    if(u==v)
+        return v;
+    if(height[v]<height[u])
+        swap(u,v);
+    return lca(u,parent[v]);
+}
+
+int caseNo=1;
+
+void solve(){
+    init();
+    cout<<"Case "<<caseNo++<<":\n";
+
+    int q;
+    cin>>n;
+    FOR(i,1,n){
+        cin>>q;
+        For(j,q){
+            int x;
+            cin>>x;
+            adj[i].pb(x);
+            adj[x].pb(i);
+        }
+    }
+
+    pre();
+    cin>>q;
+    while(q--){
+        int a,b;
+        cin>>a>>b;
+        cout<<lca(a,b)<<endl;        
+    }
+}
+
+
+int main(){
+
+     /*
+
+    freopen("input.txt","r",stdin);
+    freopen("output.txt","w",stdout);
+    freopen("debug_log.txt","w",stderr);
+    
+          // */
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+
+
+    int t; cin>>t; while(t--)
+    { 
+        solve();   
+    }
+
+}
